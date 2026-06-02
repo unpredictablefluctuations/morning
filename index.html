@@ -19,6 +19,7 @@
     --text-faint: #A8A39A;
     --accent: #5A7A3E;
     --accent-soft: #EAF0DE;
+    --prep: #C7682E;
     --border: #E8E2D3;
     --done-bg: #EDF2E4;
   }
@@ -32,6 +33,7 @@
       --text-faint: #6B6760;
       --accent: #8FB166;
       --accent-soft: #2E3A20;
+      --prep: #E08855;
       --border: #3A3631;
       --done-bg: #2A3320;
     }
@@ -196,12 +198,15 @@
     font-family: 'JetBrains Mono', monospace; font-size: 11px;
     color: var(--text-faint); text-transform: uppercase;
     letter-spacing: 0.12em; margin: 0 0 28px;
+    transition: color 0.3s;
   }
+  .timer-modal.prep .timer-set { color: var(--prep); }
   .timer-ring { position: relative; width: 200px; height: 200px; margin: 0 auto 24px; }
   .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .timer-ring circle { fill: none; stroke-width: 5; stroke-linecap: round; }
   .ring-bg { stroke: var(--surface-2); }
-  .ring-fg { stroke: var(--accent); transition: stroke-dashoffset 1s linear; }
+  .ring-fg { stroke: var(--accent); transition: stroke-dashoffset 1s linear, stroke 0.3s; }
+  .timer-modal.prep .ring-fg { stroke: var(--prep); }
   .timer-display {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
@@ -209,7 +214,9 @@
     font-variation-settings: 'opsz' 144;
     font-size: 52px; font-weight: 400; color: var(--text);
     letter-spacing: -0.03em;
+    transition: color 0.3s;
   }
+  .timer-modal.prep .timer-display { color: var(--prep); font-size: 72px; }
   .timer-actions { display: flex; gap: 10px; margin-top: 20px; }
   .timer-actions button {
     flex: 1; padding: 13px; border: none; border-radius: 12px;
@@ -275,7 +282,7 @@
 <div class="timer-modal" id="timer-modal">
   <div class="timer-card">
     <p class="timer-exercise" id="timer-exercise">Exercise</p>
-    <p class="timer-set" id="timer-set">Set 1 of 1</p>
+    <p class="timer-set" id="timer-set">Get ready</p>
     <div class="timer-ring">
       <svg viewBox="0 0 100 100">
         <circle class="ring-bg" cx="50" cy="50" r="46"></circle>
@@ -285,7 +292,7 @@
     </div>
     <div class="timer-actions">
       <button class="btn-secondary" id="timer-cancel">Cancel</button>
-      <button class="btn-primary" id="timer-pause">Pause</button>
+      <button class="btn-primary" id="timer-action">Pause</button>
     </div>
   </div>
 </div>
@@ -331,10 +338,10 @@
         { name: "Cool-down stretch", time: "~5 min", items: [
           { id: "mwf-c-1", name: "Standing forward fold", dose: "45s × 2", time: 45, sets: 2,
             desc: "From standing, hinge at the hips and fold forward, letting upper body hang. Bend knees as much as you need to at first. Over time, work toward straighter legs. Let gravity do the work — don't bounce or force it. Breathe deeply." },
-          { id: "mwf-c-2", name: "Supine hamstring — right", dose: "45 sec", time: 45,
-            desc: "Lie on your back, left leg flat on the floor. Lift right leg toward the ceiling, hands behind the thigh (or use a towel/strap around the foot). Pull gently to where you feel tension but not pain. Keep the lifted leg as straight as possible." },
-          { id: "mwf-c-3", name: "Supine hamstring — left", dose: "45 sec", time: 45,
-            desc: "Same as right side, mirrored. Right leg flat, left leg lifted. Don't let the flat leg drift up — keep it pressed to the floor." },
+          { id: "mwf-c-2", name: "Standing hamstring — right", dose: "45 sec", time: 45,
+            desc: "Stand tall. Extend right leg forward, heel on the floor (or on a low step / bench if available), toes pointing up. Keep both legs straight. Hinge forward at the hips, keeping your back flat, until you feel the stretch in the back of the right thigh. Hands rest on the front leg or reach toward the toes." },
+          { id: "mwf-c-3", name: "Standing hamstring — left", dose: "45 sec", time: 45,
+            desc: "Same as right side, mirrored. Left leg forward, heel down, toes up. Hinge from the hips with a flat back, feel the stretch in the back of the left thigh." },
           { id: "mwf-c-4", name: "Low lunge — right", dose: "30 sec", time: 30,
             desc: "Step right foot forward into a lunge, lower the left knee to the mat. Keep front shin vertical (knee over ankle). Gently press hips forward, feeling a stretch in the front of the left hip. Keep torso upright." },
           { id: "mwf-c-5", name: "Low lunge — left", dose: "30 sec", time: 30,
@@ -373,10 +380,10 @@
         { name: "Hamstring + hip mobility", time: "~10 min", items: [
           { id: "tt-m-1", name: "Standing forward fold", dose: "45s × 3", time: 45, sets: 3,
             desc: "Hinge at the hips, fold forward, let upper body hang. Bend knees as needed at first, work toward straight legs over time. Don't bounce or force. Breathe deeply. Three sets of 45 seconds." },
-          { id: "tt-m-2", name: "Supine hamstring — right", dose: "45 sec", time: 45,
-            desc: "On your back, left leg flat. Lift right leg toward the ceiling, hands behind the thigh (or use a strap around the foot). Pull gently to tension, not pain. Keep lifted leg as straight as possible." },
-          { id: "tt-m-3", name: "Supine hamstring — left", dose: "45 sec", time: 45,
-            desc: "Mirrored. Right leg flat, left leg lifted. Don't let the flat leg drift up." },
+          { id: "tt-m-2", name: "Standing hamstring — right", dose: "45 sec", time: 45,
+            desc: "Stand tall. Extend right leg forward, heel on the floor (or on a low step / bench if available), toes pointing up. Keep both legs straight. Hinge forward at the hips, keeping your back flat, until you feel the stretch in the back of the right thigh. Hands rest on the front leg or reach toward the toes." },
+          { id: "tt-m-3", name: "Standing hamstring — left", dose: "45 sec", time: 45,
+            desc: "Same as right side, mirrored. Left leg forward, heel down, toes up. Hinge from the hips with a flat back, feel the stretch in the back of the left thigh." },
           { id: "tt-m-4", name: "Seated forward fold", dose: "45s × 2", time: 45, sets: 2,
             desc: "Sit with legs straight out, feet flexed. Hinge from the hips (not by rounding your back) and reach toward your feet. Hold where you feel tension, don't force. Breathe. Two sets of 45 seconds." },
           { id: "tt-m-5", name: "Low lunge — right", dose: "45 sec", time: 45,
@@ -398,13 +405,41 @@
   let checkedState = {};
   let expandedState = {};
   let timer = null;
+  let audioCtx = null;
+
+  function ensureAudioCtx() {
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(()=>{});
+    }
+  }
+  document.addEventListener('touchstart', ensureAudioCtx, { passive: true });
+  document.addEventListener('click', ensureAudioCtx, { passive: true });
+
+  function playBeep(freq, dur, vol) {
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    try {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination);
+      o.frequency.value = freq || 880;
+      o.type = 'sine';
+      g.gain.setValueAtTime(vol || 0.25, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (dur || 0.35));
+      o.start();
+      o.stop(audioCtx.currentTime + (dur || 0.35));
+    } catch(e) {}
+  }
 
   async function safeGet(key) {
-    try { const r = await window.storage.get(key); return r ? r.value : null; }
+    try { return localStorage.getItem('morningRoutine:' + key); }
     catch(e) { return null; }
   }
   async function safeSet(key, val) {
-    try { await window.storage.set(key, val); } catch(e) {}
+    try { localStorage.setItem('morningRoutine:' + key, val); } catch(e) {}
   }
 
   async function loadState() {
@@ -515,15 +550,60 @@
     else toggleDone(item.id);
   }
 
+  const PREP_SECONDS = 5;
+
   function startTimer(item) {
+    ensureAudioCtx();
     const sets = item.sets || 1;
-    timer = { item, sets, currentSet: 1, duration: item.time, remaining: item.time, paused: false, interval: null };
+    timer = {
+      item, sets, currentSet: 1,
+      duration: item.time, remaining: item.time,
+      paused: false, interval: null,
+      phase: 'prep', prepRemaining: PREP_SECONDS
+    };
     document.getElementById('timer-exercise').textContent = item.name;
-    document.getElementById('timer-set').textContent = sets > 1 ? `Set 1 of ${sets}` : 'Hold steady';
-    document.getElementById('timer-pause').textContent = 'Pause';
-    document.getElementById('timer-modal').classList.add('active');
+    document.getElementById('timer-set').textContent = 'Get ready';
+    document.getElementById('timer-action').textContent = 'Skip';
+    const modal = document.getElementById('timer-modal');
+    modal.classList.add('active');
+    modal.classList.add('prep');
     const circumference = 2 * Math.PI * 46;
     document.getElementById('ring-fg').style.strokeDasharray = circumference;
+    updatePrepDisplay();
+    runPrep();
+  }
+
+  function updatePrepDisplay() {
+    if (!timer) return;
+    document.getElementById('timer-display').textContent = timer.prepRemaining;
+    const circumference = 2 * Math.PI * 46;
+    // Ring fills up as prep counts down
+    document.getElementById('ring-fg').style.strokeDashoffset = circumference * (timer.prepRemaining / PREP_SECONDS);
+  }
+
+  function runPrep() {
+    if (timer.interval) clearInterval(timer.interval);
+    timer.interval = setInterval(() => {
+      if (!timer || timer.paused) return;
+      timer.prepRemaining--;
+      if (timer.prepRemaining > 0) {
+        updatePrepDisplay();
+        if (timer.prepRemaining <= 3) playBeep(660, 0.08, 0.15);
+      } else {
+        clearInterval(timer.interval);
+        beginExercisePhase();
+      }
+    }, 1000);
+  }
+
+  function beginExercisePhase() {
+    timer.phase = 'exercise';
+    if (navigator.vibrate) navigator.vibrate(60);
+    playBeep(880, 0.25, 0.25);
+    document.getElementById('timer-modal').classList.remove('prep');
+    document.getElementById('timer-set').textContent = timer.sets > 1 ? `Set 1 of ${timer.sets}` : 'Hold steady';
+    document.getElementById('timer-action').textContent = 'Pause';
+    const circumference = 2 * Math.PI * 46;
     document.getElementById('ring-fg').style.strokeDashoffset = 0;
     updateTimerDisplay();
     runTimer();
@@ -538,7 +618,7 @@
       if (timer.remaining <= 0) {
         clearInterval(timer.interval);
         if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
-        playBeep();
+        playBeep(880, 0.35, 0.3);
         if (timer.currentSet < timer.sets) {
           timer.currentSet++;
           timer.remaining = timer.duration;
@@ -576,21 +656,9 @@
   function closeTimer() {
     if (timer && timer.interval) clearInterval(timer.interval);
     timer = null;
-    document.getElementById('timer-modal').classList.remove('active');
-  }
-
-  function playBeep() {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = 880;
-      o.type = 'sine';
-      g.gain.setValueAtTime(0.25, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-      o.start(); o.stop(ctx.currentTime + 0.35);
-    } catch(e) {}
+    const modal = document.getElementById('timer-modal');
+    modal.classList.remove('active');
+    modal.classList.remove('prep');
   }
 
   document.querySelectorAll('.toggle button').forEach(btn => {
@@ -613,10 +681,16 @@
   });
 
   document.getElementById('timer-cancel').addEventListener('click', closeTimer);
-  document.getElementById('timer-pause').addEventListener('click', () => {
+  document.getElementById('timer-action').addEventListener('click', () => {
     if (!timer) return;
-    timer.paused = !timer.paused;
-    document.getElementById('timer-pause').textContent = timer.paused ? 'Resume' : 'Pause';
+    if (timer.phase === 'prep') {
+      // Skip the prep countdown — jump straight to exercise
+      if (timer.interval) clearInterval(timer.interval);
+      beginExercisePhase();
+    } else {
+      timer.paused = !timer.paused;
+      document.getElementById('timer-action').textContent = timer.paused ? 'Resume' : 'Pause';
+    }
   });
 
   (async () => { await loadState(); render(); })();
