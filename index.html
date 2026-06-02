@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#FAF8F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1815" media="(prefers-color-scheme: dark)">
+<title>Morning routine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF8F3;
+    --surface: #FFFFFF;
+    --surface-2: #F2EDE2;
+    --text: #1A1A1A;
+    --text-mute: #6B6760;
+    --text-faint: #A8A39A;
+    --accent: #5A7A3E;
+    --accent-soft: #EAF0DE;
+    --border: #E8E2D3;
+    --done-bg: #EDF2E4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1815;
+      --surface: #252320;
+      --surface-2: #2D2A26;
+      --text: #F5F1E8;
+      --text-mute: #A8A39A;
+      --text-faint: #6B6760;
+      --accent: #8FB166;
+      --accent-soft: #2E3A20;
+      --border: #3A3631;
+      --done-bg: #2A3320;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px; line-height: 1.5;
+    overflow-x: hidden; overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 540px; margin: 0 auto; min-height: 100vh;
+    padding: max(env(safe-area-inset-top), 20px) 16px max(env(safe-area-inset-bottom), 40px);
+  }
+  header { padding: 12px 4px 16px; }
+  .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-faint);
+    margin: 0 0 10px;
+  }
+  .title {
+    font-family: 'Fraunces', serif;
+    font-weight: 400; font-size: 32px; line-height: 1.05;
+    letter-spacing: -0.02em; margin: 0 0 20px;
+    font-variation-settings: 'opsz' 96;
+  }
+  .toggle {
+    display: grid; grid-template-columns: 1fr 1fr;
+    background: var(--surface-2); border-radius: 12px;
+    padding: 4px; gap: 4px;
+  }
+  .toggle button {
+    background: transparent; border: none; padding: 11px 8px;
+    font-family: 'Public Sans', sans-serif; font-size: 13px; font-weight: 500;
+    color: var(--text-mute); border-radius: 8px; cursor: pointer;
+    transition: all 0.2s; letter-spacing: 0.02em;
+  }
+  .toggle button.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .progress {
+    margin: 18px 0 6px; height: 3px;
+    background: var(--surface-2); border-radius: 2px; overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%; background: var(--accent); border-radius: 2px;
+    width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .progress-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text-faint);
+    margin-top: 8px; display: flex; justify-content: space-between;
+    letter-spacing: 0.05em;
+  }
+  .section { margin: 28px 0; }
+  .section-header {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 12px; padding: 0 4px;
+  }
+  .section-name {
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500;
+    color: var(--text); margin: 0; letter-spacing: -0.01em;
+  }
+  .section-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text-faint); margin-left: auto;
+    letter-spacing: 0.05em;
+  }
+  .exercise {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; margin-bottom: 8px;
+    transition: background 0.25s, border-color 0.25s;
+    overflow: hidden;
+  }
+  .exercise.done { background: var(--done-bg); border-color: transparent; }
+  .ex-row {
+    padding: 14px 6px 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+    transition: transform 0.15s;
+  }
+  .ex-row:active { transform: scale(0.985); }
+  .exercise.done .ex-name {
+    color: var(--text-mute); text-decoration: line-through;
+    text-decoration-color: var(--accent); text-decoration-thickness: 1.5px;
+  }
+  .exercise.done .ex-dose { color: var(--text-faint); background: transparent; }
+  .check {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 1.5px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .exercise.done .check { background: var(--accent); border-color: var(--accent); }
+  .check svg {
+    width: 12px; height: 12px; color: white;
+    opacity: 0; transform: scale(0.5); transition: all 0.2s;
+  }
+  .exercise.done .check svg { opacity: 1; transform: scale(1); }
+  .ex-body { flex: 1; min-width: 0; }
+  .ex-name {
+    font-weight: 500; font-size: 15px; color: var(--text);
+    margin: 0; line-height: 1.3;
+  }
+  .ex-dose {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 500; color: var(--text-mute);
+    background: var(--surface-2); padding: 5px 9px; border-radius: 6px;
+    flex-shrink: 0; white-space: nowrap; display: flex;
+    align-items: center; gap: 5px;
+  }
+  .timer-icon { font-size: 10px; opacity: 0.6; }
+  .ex-expand {
+    background: transparent; border: none; padding: 8px;
+    color: var(--text-faint); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; border-radius: 8px;
+    transition: background 0.2s, transform 0.25s;
+    margin-right: 2px;
+  }
+  .ex-expand:active { background: var(--surface-2); }
+  .ex-expand svg {
+    width: 16px; height: 16px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .exercise.expanded .ex-expand svg { transform: rotate(180deg); }
+  .ex-desc {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .exercise.expanded .ex-desc { max-height: 400px; }
+  .ex-desc-inner {
+    padding: 0 18px 16px 54px;
+    font-size: 13.5px; line-height: 1.55;
+    color: var(--text-mute);
+  }
+  .exercise.done .ex-desc-inner { color: var(--text-faint); }
+  .timer-modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: none; align-items: center; justify-content: center;
+    z-index: 100; padding: 24px;
+  }
+  .timer-modal.active { display: flex; }
+  .timer-card {
+    background: var(--surface); border-radius: 24px;
+    padding: 36px 28px 28px; width: 100%; max-width: 360px;
+    text-align: center;
+  }
+  .timer-exercise {
+    font-family: 'Fraunces', serif; font-size: 20px; font-weight: 500;
+    margin: 0 0 6px; color: var(--text); letter-spacing: -0.01em;
+  }
+  .timer-set {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--text-faint); text-transform: uppercase;
+    letter-spacing: 0.12em; margin: 0 0 28px;
+  }
+  .timer-ring { position: relative; width: 200px; height: 200px; margin: 0 auto 24px; }
+  .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .timer-ring circle { fill: none; stroke-width: 5; stroke-linecap: round; }
+  .ring-bg { stroke: var(--surface-2); }
+  .ring-fg { stroke: var(--accent); transition: stroke-dashoffset 1s linear; }
+  .timer-display {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-variation-settings: 'opsz' 144;
+    font-size: 52px; font-weight: 400; color: var(--text);
+    letter-spacing: -0.03em;
+  }
+  .timer-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .timer-actions button {
+    flex: 1; padding: 13px; border: none; border-radius: 12px;
+    font-family: 'Public Sans', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: transform 0.15s;
+  }
+  .btn-secondary { background: var(--surface-2); color: var(--text); }
+  .btn-primary { background: var(--text); color: var(--surface); }
+  .btn-primary:active, .btn-secondary:active { transform: scale(0.97); }
+  .complete-banner {
+    background: var(--accent-soft); border: 1px solid var(--accent);
+    border-radius: 14px; padding: 16px 18px; margin: 16px 0;
+    text-align: center; display: none;
+  }
+  .complete-banner.show { display: block; animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes slideIn {
+    from { transform: translateY(-12px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .complete-banner h3 {
+    font-family: 'Fraunces', serif; font-weight: 500;
+    margin: 0 0 3px; font-size: 17px; color: var(--accent);
+  }
+  .complete-banner p { font-size: 13px; color: var(--text-mute); margin: 0; }
+  .footer { margin: 36px 0 12px; text-align: center; }
+  .reset-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-mute); padding: 11px 22px; border-radius: 100px;
+    font-family: 'Public Sans', sans-serif; font-size: 13px; cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .reset-btn:active { background: var(--surface-2); transform: scale(0.97); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <p class="label">Morning routine</p>
+    <h1 class="title" id="routine-title">Mon · Wed · Fri</h1>
+    <div class="toggle">
+      <button data-routine="mwf" class="active">Mon · Wed · Fri</button>
+      <button data-routine="tt">Tue · Thu</button>
+    </div>
+    <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="progress-text">
+      <span id="progress-count">0 / 0 complete</span>
+      <span id="progress-time">~25–30 min</span>
+    </div>
+  </header>
+
+  <div class="complete-banner" id="complete-banner">
+    <h3>Session complete</h3>
+    <p>Nice work. Tap reset below before your next session.</p>
+  </div>
+
+  <main id="routine-container"></main>
+
+  <div class="footer">
+    <button class="reset-btn" id="reset-btn">Reset session</button>
+  </div>
+</div>
+
+<div class="timer-modal" id="timer-modal">
+  <div class="timer-card">
+    <p class="timer-exercise" id="timer-exercise">Exercise</p>
+    <p class="timer-set" id="timer-set">Set 1 of 1</p>
+    <div class="timer-ring">
+      <svg viewBox="0 0 100 100">
+        <circle class="ring-bg" cx="50" cy="50" r="46"></circle>
+        <circle class="ring-fg" cx="50" cy="50" r="46" id="ring-fg"></circle>
+      </svg>
+      <div class="timer-display" id="timer-display">0:00</div>
+    </div>
+    <div class="timer-actions">
+      <button class="btn-secondary" id="timer-cancel">Cancel</button>
+      <button class="btn-primary" id="timer-pause">Pause</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const routines = {
+    mwf: {
+      name: "Mon · Wed · Fri",
+      time: "~25–30 min",
+      sections: [
+        { name: "Warm-up", time: "~3 min", items: [
+          { id: "mwf-w-1", name: "Cat-cow", dose: "8–10 reps",
+            desc: "On all fours, hands under shoulders, knees under hips. Inhale and drop your belly toward the floor, lifting your chest and tailbone (cow). Exhale and round your spine to the ceiling, tucking your chin and tailbone (cat). Move slowly, syncing breath with motion." },
+          { id: "mwf-w-2", name: "Hip circles", dose: "10 each way",
+            desc: "Stand with feet shoulder-width apart, hands on hips. Draw a large circle with your hips, keeping your upper body relatively still. Use the full available range of motion in each direction." },
+          { id: "mwf-w-3", name: "Leg swings", dose: "12–15 each",
+            desc: "Stand on one leg, use a wall or chair for balance if needed. Swing the other leg forward and back like a pendulum, keeping it relatively straight. Let momentum do the work — don't force the range." },
+          { id: "mwf-w-4", name: "Inchworm", dose: "5 reps",
+            desc: "From standing, hinge forward and place hands on the floor (bend knees as much as needed). Walk your hands forward until you're in a plank. Walk hands back to feet and stand up. Move slowly and controlled." }
+        ]},
+        { name: "Main block", time: "~15 min", items: [
+          { id: "mwf-m-1", name: "Side plank — right", dose: "1 min", time: 60,
+            desc: "Lie on your right side with elbow directly under shoulder, legs stacked. Lift hips so your body forms a straight line from head to heels. Keep core engaged, don't let hips sag. Look straight ahead." },
+          { id: "mwf-m-2", name: "Side plank — left", dose: "1 min", time: 60,
+            desc: "Same as right side, mirrored. Elbow under shoulder, body in a straight line, hips lifted. Don't let the top hip drift backward." },
+          { id: "mwf-m-3", name: "Front plank", dose: "1 min", time: 60,
+            desc: "On your elbows, body in a straight line from head to heels. Engage glutes and core — no hip sag, no piking up. Forearms parallel, eyes looking just past your hands. Breathe steadily." },
+          { id: "mwf-m-4", name: "Hollow body hold", dose: "30–40 sec", time: 40,
+            desc: "Lie on your back, lower back pressed firmly into the floor. Lift arms overhead and legs to about 6 inches off the ground. You should look like a banana from the side. If your lower back lifts off the floor, raise legs higher to reduce difficulty." },
+          { id: "mwf-m-5", name: "Regular push-ups", dose: "10–14 reps",
+            desc: "Hands slightly wider than shoulders, fingers spread. Keep elbows tucked at roughly 45° to your body (not flared to 90°). Lower until chest is just above the floor, then push back up. Body stays in one rigid line." },
+          { id: "mwf-m-6", name: "Mountain climbers", dose: "50 reps",
+            desc: "Start in a plank with straight arms. Drive one knee toward your chest, then quickly switch legs. Keep hips low and stable — don't let them bounce up. Quick but controlled, not frantic. Pause and shake out at 25." },
+          { id: "mwf-m-7", name: "Squats", dose: "25 reps",
+            desc: "Feet shoulder-width apart, toes slightly turned out. Sit back as if into a chair, keeping chest up and weight in your heels. Descend until thighs are roughly parallel to the floor (or as deep as mobility allows). Drive through heels to stand." },
+          { id: "mwf-m-8", name: "Glute bridge", dose: "15 reps",
+            desc: "Lie on your back, knees bent, feet flat about hip-width apart, heels close to your glutes. Drive through your heels to lift hips, squeezing glutes hard at the top. Body forms a straight line from knees to shoulders. Pause 2 seconds at the top, then lower with control." },
+          { id: "mwf-m-9", name: "Knee push-ups", dose: "10–15 reps",
+            desc: "Same form as regular push-ups but with knees on the floor. Body still forms a straight line from knees to head — don't pike hips up. Elbows tucked tight to the body." },
+          { id: "mwf-m-10", name: "Superman hold", dose: "5–8 × 5–10s",
+            desc: "Lie face down, arms extended forward, legs straight. Simultaneously lift arms, chest, and legs off the floor, squeezing lower back and glutes. Hold for 5–10 seconds, then lower with control. Look at the floor, not up — keep neck neutral." }
+        ]},
+        { name: "Cool-down stretch", time: "~5 min", items: [
+          { id: "mwf-c-1", name: "Standing forward fold", dose: "45s × 2", time: 45, sets: 2,
+            desc: "From standing, hinge at the hips and fold forward, letting upper body hang. Bend knees as much as you need to at first. Over time, work toward straighter legs. Let gravity do the work — don't bounce or force it. Breathe deeply." },
+          { id: "mwf-c-2", name: "Supine hamstring — right", dose: "45 sec", time: 45,
+            desc: "Lie on your back, left leg flat on the floor. Lift right leg toward the ceiling, hands behind the thigh (or use a towel/strap around the foot). Pull gently to where you feel tension but not pain. Keep the lifted leg as straight as possible." },
+          { id: "mwf-c-3", name: "Supine hamstring — left", dose: "45 sec", time: 45,
+            desc: "Same as right side, mirrored. Right leg flat, left leg lifted. Don't let the flat leg drift up — keep it pressed to the floor." },
+          { id: "mwf-c-4", name: "Low lunge — right", dose: "30 sec", time: 30,
+            desc: "Step right foot forward into a lunge, lower the left knee to the mat. Keep front shin vertical (knee over ankle). Gently press hips forward, feeling a stretch in the front of the left hip. Keep torso upright." },
+          { id: "mwf-c-5", name: "Low lunge — left", dose: "30 sec", time: 30,
+            desc: "Same as right side, mirrored. Left foot forward, right knee on the mat. Hips pressed forward." },
+          { id: "mwf-c-6", name: "Child's pose", dose: "45 sec", time: 45,
+            desc: "Kneel with knees apart, big toes touching. Sit hips back toward your heels and fold forward, arms extended or resting by your sides. Forehead rests on the mat. Breathe into your lower back." }
+        ]}
+      ]
+    },
+    tt: {
+      name: "Tue · Thu",
+      time: "~25–30 min",
+      sections: [
+        { name: "Activation", time: "~4 min", items: [
+          { id: "tt-a-1", name: "Cat-cow", dose: "10 reps",
+            desc: "On all fours, hands under shoulders, knees under hips. Inhale, drop belly and lift chest (cow). Exhale, round spine and tuck chin (cat). Slow, breath-synced." },
+          { id: "tt-a-2", name: "Hip circles", dose: "10 each way",
+            desc: "Standing, hands on hips. Draw a large circle with your hips, keeping upper body still. Full range each direction." },
+          { id: "tt-a-3", name: "Leg swings", dose: "15 each",
+            desc: "Stand on one leg, use a wall for balance. Swing the other leg forward and back, kept relatively straight. Let momentum work, don't force range." },
+          { id: "tt-a-4", name: "Inchworm", dose: "5 reps",
+            desc: "Hinge from standing, hands to floor, walk out to plank, walk back, stand. Slow and controlled." }
+        ]},
+        { name: "Posterior chain + core", time: "~12 min", items: [
+          { id: "tt-s-1", name: "Glute bridge", dose: "15 × 2",
+            desc: "On your back, feet flat, hip-width apart, heels close to glutes. Drive hips up through heels, squeeze glutes at the top. Pause 2 seconds, then lower with control. Two sets of 15." },
+          { id: "tt-s-2", name: "Single-leg deadlift", dose: "8 each × 2",
+            desc: "Stand on one leg with a soft (not locked) knee. Hinge at the hip, sending the other leg straight behind you as your torso tips forward. Keep back flat, reach toward the ground. Return to standing by squeezing glutes. Go slow — balance is part of the work. 8 reps each leg, two sets." },
+          { id: "tt-s-3", name: "Dead bug", dose: "10 each × 2",
+            desc: "On your back, arms extended toward ceiling, knees bent at 90° (shins parallel to floor). Slowly lower opposite arm and leg toward the floor without letting lower back arch off the ground. Return and switch sides. Move slowly. 10 each side, two sets." },
+          { id: "tt-s-4", name: "Reverse lunge", dose: "10 each × 2",
+            desc: "From standing, step one foot backward and lower until both knees are at about 90°. Front shin stays vertical. Drive through the front heel to return. Alternate legs. 10 each, two sets." },
+          { id: "tt-s-5", name: "Bird dog", dose: "10 each side",
+            desc: "From all fours, extend opposite arm and leg simultaneously (right arm + left leg, then switch). Hold for 2 seconds. Keep hips square to the floor — don't rotate. Move slowly." }
+        ]},
+        { name: "Hamstring + hip mobility", time: "~10 min", items: [
+          { id: "tt-m-1", name: "Standing forward fold", dose: "45s × 3", time: 45, sets: 3,
+            desc: "Hinge at the hips, fold forward, let upper body hang. Bend knees as needed at first, work toward straight legs over time. Don't bounce or force. Breathe deeply. Three sets of 45 seconds." },
+          { id: "tt-m-2", name: "Supine hamstring — right", dose: "45 sec", time: 45,
+            desc: "On your back, left leg flat. Lift right leg toward the ceiling, hands behind the thigh (or use a strap around the foot). Pull gently to tension, not pain. Keep lifted leg as straight as possible." },
+          { id: "tt-m-3", name: "Supine hamstring — left", dose: "45 sec", time: 45,
+            desc: "Mirrored. Right leg flat, left leg lifted. Don't let the flat leg drift up." },
+          { id: "tt-m-4", name: "Seated forward fold", dose: "45s × 2", time: 45, sets: 2,
+            desc: "Sit with legs straight out, feet flexed. Hinge from the hips (not by rounding your back) and reach toward your feet. Hold where you feel tension, don't force. Breathe. Two sets of 45 seconds." },
+          { id: "tt-m-5", name: "Low lunge — right", dose: "45 sec", time: 45,
+            desc: "Right foot forward, left knee on mat. Front shin vertical. Press hips gently forward, feeling stretch in the front of the left hip. Torso upright." },
+          { id: "tt-m-6", name: "Low lunge — left", dose: "45 sec", time: 45,
+            desc: "Mirrored. Left foot forward, right knee on mat. Hips pressed forward." },
+          { id: "tt-m-7", name: "Figure-four — right", dose: "45 sec", time: 45,
+            desc: "On your back, knees bent. Cross right ankle over left knee (creating a '4' shape). Reach through and pull both legs toward your chest. Releases right glute and hip rotators." },
+          { id: "tt-m-8", name: "Figure-four — left", dose: "45 sec", time: 45,
+            desc: "Mirrored. Left ankle over right knee, pull both legs toward chest." },
+          { id: "tt-m-9", name: "Child's pose", dose: "60 sec", time: 60,
+            desc: "Kneel with knees apart, big toes touching. Sit hips back to heels, fold forward, arms extended or by your sides. Forehead on mat. Breathe into the lower back." }
+        ]}
+      ]
+    }
+  };
+
+  let currentRoutine = 'mwf';
+  let checkedState = {};
+  let expandedState = {};
+  let timer = null;
+
+  async function safeGet(key) {
+    try { const r = await window.storage.get(key); return r ? r.value : null; }
+    catch(e) { return null; }
+  }
+  async function safeSet(key, val) {
+    try { await window.storage.set(key, val); } catch(e) {}
+  }
+
+  async function loadState() {
+    const r = await safeGet('lastRoutine');
+    if (r) currentRoutine = r;
+    const c = await safeGet('checked:' + currentRoutine);
+    checkedState = c ? JSON.parse(c) : {};
+    expandedState = {};
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function render() {
+    const r = routines[currentRoutine];
+    document.getElementById('routine-title').textContent = r.name;
+    document.getElementById('progress-time').textContent = r.time;
+    document.querySelectorAll('.toggle button').forEach(b => {
+      b.classList.toggle('active', b.dataset.routine === currentRoutine);
+    });
+    const container = document.getElementById('routine-container');
+    container.innerHTML = '';
+    r.sections.forEach(section => {
+      const sectionEl = document.createElement('div');
+      sectionEl.className = 'section';
+      const header = document.createElement('div');
+      header.className = 'section-header';
+      header.innerHTML = `<h2 class="section-name">${escapeHtml(section.name)}</h2><span class="section-time">${escapeHtml(section.time)}</span>`;
+      sectionEl.appendChild(header);
+      section.items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'exercise' + (checkedState[item.id] ? ' done' : '') + (expandedState[item.id] ? ' expanded' : '');
+        card.dataset.id = item.id;
+        const timerIcon = item.time ? '<span class="timer-icon">⏱</span>' : '';
+        card.innerHTML = `
+          <div class="ex-row">
+            <div class="check">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 8 6.5 11.5 13 5"/>
+              </svg>
+            </div>
+            <div class="ex-body">
+              <p class="ex-name">${escapeHtml(item.name)}</p>
+            </div>
+            <div class="ex-dose">${escapeHtml(item.dose)}${timerIcon}</div>
+            <button class="ex-expand" aria-label="Toggle description">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="4 6 8 10 12 6"/>
+              </svg>
+            </button>
+          </div>
+          <div class="ex-desc">
+            <div class="ex-desc-inner">${escapeHtml(item.desc || '')}</div>
+          </div>
+        `;
+        const row = card.querySelector('.ex-row');
+        const expandBtn = card.querySelector('.ex-expand');
+        row.addEventListener('click', (e) => {
+          if (e.target.closest('.ex-expand')) return;
+          handleExerciseClick(item);
+        });
+        expandBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleExpand(item.id);
+        });
+        sectionEl.appendChild(card);
+      });
+      container.appendChild(sectionEl);
+    });
+    updateProgress();
+  }
+
+  function toggleExpand(itemId) {
+    if (expandedState[itemId]) delete expandedState[itemId];
+    else expandedState[itemId] = true;
+    const card = document.querySelector(`[data-id="${itemId}"]`);
+    if (card) card.classList.toggle('expanded');
+  }
+
+  function updateProgress() {
+    const r = routines[currentRoutine];
+    let total = 0, done = 0;
+    r.sections.forEach(s => s.items.forEach(item => {
+      total++;
+      if (checkedState[item.id]) done++;
+    }));
+    const pct = total ? (done / total) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-count').textContent = `${done} / ${total} complete`;
+    const banner = document.getElementById('complete-banner');
+    if (done === total && total > 0) banner.classList.add('show');
+    else banner.classList.remove('show');
+  }
+
+  function toggleDone(itemId) {
+    if (checkedState[itemId]) delete checkedState[itemId];
+    else checkedState[itemId] = true;
+    safeSet('checked:' + currentRoutine, JSON.stringify(checkedState));
+    const card = document.querySelector(`[data-id="${itemId}"]`);
+    if (card) card.classList.toggle('done');
+    updateProgress();
+    if (checkedState[itemId] && navigator.vibrate) navigator.vibrate(15);
+  }
+
+  function handleExerciseClick(item) {
+    if (item.time && !checkedState[item.id]) startTimer(item);
+    else toggleDone(item.id);
+  }
+
+  function startTimer(item) {
+    const sets = item.sets || 1;
+    timer = { item, sets, currentSet: 1, duration: item.time, remaining: item.time, paused: false, interval: null };
+    document.getElementById('timer-exercise').textContent = item.name;
+    document.getElementById('timer-set').textContent = sets > 1 ? `Set 1 of ${sets}` : 'Hold steady';
+    document.getElementById('timer-pause').textContent = 'Pause';
+    document.getElementById('timer-modal').classList.add('active');
+    const circumference = 2 * Math.PI * 46;
+    document.getElementById('ring-fg').style.strokeDasharray = circumference;
+    document.getElementById('ring-fg').style.strokeDashoffset = 0;
+    updateTimerDisplay();
+    runTimer();
+  }
+
+  function runTimer() {
+    if (timer.interval) clearInterval(timer.interval);
+    timer.interval = setInterval(() => {
+      if (!timer || timer.paused) return;
+      timer.remaining--;
+      updateTimerDisplay();
+      if (timer.remaining <= 0) {
+        clearInterval(timer.interval);
+        if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+        playBeep();
+        if (timer.currentSet < timer.sets) {
+          timer.currentSet++;
+          timer.remaining = timer.duration;
+          document.getElementById('timer-set').textContent = `Set ${timer.currentSet} of ${timer.sets}`;
+          setTimeout(() => { if (timer) runTimer(); }, 1500);
+        } else {
+          finishTimer();
+        }
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    if (!timer) return;
+    const m = Math.floor(timer.remaining / 60);
+    const s = timer.remaining % 60;
+    document.getElementById('timer-display').textContent = `${m}:${String(s).padStart(2,'0')}`;
+    const circumference = 2 * Math.PI * 46;
+    const offset = circumference * (1 - timer.remaining / timer.duration);
+    document.getElementById('ring-fg').style.strokeDashoffset = offset;
+  }
+
+  function finishTimer() {
+    const itemId = timer.item.id;
+    closeTimer();
+    if (!checkedState[itemId]) {
+      checkedState[itemId] = true;
+      safeSet('checked:' + currentRoutine, JSON.stringify(checkedState));
+      const card = document.querySelector(`[data-id="${itemId}"]`);
+      if (card) card.classList.add('done');
+      updateProgress();
+    }
+  }
+
+  function closeTimer() {
+    if (timer && timer.interval) clearInterval(timer.interval);
+    timer = null;
+    document.getElementById('timer-modal').classList.remove('active');
+  }
+
+  function playBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880;
+      o.type = 'sine';
+      g.gain.setValueAtTime(0.25, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      o.start(); o.stop(ctx.currentTime + 0.35);
+    } catch(e) {}
+  }
+
+  document.querySelectorAll('.toggle button').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      currentRoutine = btn.dataset.routine;
+      await safeSet('lastRoutine', currentRoutine);
+      const c = await safeGet('checked:' + currentRoutine);
+      checkedState = c ? JSON.parse(c) : {};
+      expandedState = {};
+      render();
+    });
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (confirm('Reset all ticks for ' + routines[currentRoutine].name + '?')) {
+      checkedState = {};
+      safeSet('checked:' + currentRoutine, JSON.stringify(checkedState));
+      render();
+    }
+  });
+
+  document.getElementById('timer-cancel').addEventListener('click', closeTimer);
+  document.getElementById('timer-pause').addEventListener('click', () => {
+    if (!timer) return;
+    timer.paused = !timer.paused;
+    document.getElementById('timer-pause').textContent = timer.paused ? 'Resume' : 'Pause';
+  });
+
+  (async () => { await loadState(); render(); })();
+</script>
+</body>
+</html>
