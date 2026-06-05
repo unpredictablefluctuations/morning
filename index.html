@@ -20,6 +20,7 @@
     --accent: #5A7A3E;
     --accent-soft: #EAF0DE;
     --prep: #C7682E;
+    --rest: #4F7A8A;
     --border: #E8E2D3;
     --done-bg: #EDF2E4;
   }
@@ -34,6 +35,7 @@
       --accent: #8FB166;
       --accent-soft: #2E3A20;
       --prep: #E08855;
+      --rest: #74A6B6;
       --border: #3A3631;
       --done-bg: #2A3320;
     }
@@ -201,12 +203,14 @@
     transition: color 0.3s;
   }
   .timer-modal.prep .timer-set { color: var(--prep); }
+  .timer-modal.rest .timer-set { color: var(--rest); }
   .timer-ring { position: relative; width: 200px; height: 200px; margin: 0 auto 24px; }
   .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .timer-ring circle { fill: none; stroke-width: 5; stroke-linecap: round; }
   .ring-bg { stroke: var(--surface-2); }
   .ring-fg { stroke: var(--accent); transition: stroke-dashoffset 1s linear, stroke 0.3s; }
   .timer-modal.prep .ring-fg { stroke: var(--prep); }
+  .timer-modal.rest .ring-fg { stroke: var(--rest); }
   .timer-display {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
@@ -217,6 +221,7 @@
     transition: color 0.3s;
   }
   .timer-modal.prep .timer-display { color: var(--prep); font-size: 72px; }
+  .timer-modal.rest .timer-display { color: var(--rest); font-size: 72px; }
   .timer-actions { display: flex; gap: 10px; margin-top: 20px; }
   .timer-actions button {
     flex: 1; padding: 13px; border: none; border-radius: 12px;
@@ -353,7 +358,7 @@
     },
     tt: {
       name: "Tue · Thu",
-      time: "~25–30 min",
+      time: "~22–26 min",
       sections: [
         { name: "Activation", time: "~4 min", items: [
           { id: "tt-a-1", name: "Cat-cow", dose: "10 reps",
@@ -365,27 +370,23 @@
           { id: "tt-a-4", name: "Inchworm", dose: "5 reps",
             desc: "Hinge from standing, hands to floor, walk out to plank, walk back, stand. Slow and controlled." }
         ]},
-        { name: "Posterior chain + core", time: "~12 min", items: [
+        { name: "Strength + core", time: "~8 min", items: [
           { id: "tt-s-1", name: "Glute bridge", dose: "15 × 2",
             desc: "On your back, feet flat, hip-width apart, heels close to glutes. Drive hips up through heels, squeeze glutes at the top. Pause 2 seconds, then lower with control. Two sets of 15." },
-          { id: "tt-s-2", name: "Single-leg deadlift", dose: "8 each × 2",
-            desc: "Stand on one leg with a soft (not locked) knee. Hinge at the hip, sending the other leg straight behind you as your torso tips forward. Keep back flat, reach toward the ground. Return to standing by squeezing glutes. Go slow — balance is part of the work. 8 reps each leg, two sets." },
-          { id: "tt-s-3", name: "Dead bug", dose: "10 each × 2",
+          { id: "tt-s-4", name: "Dead bug", dose: "10 each × 2",
             desc: "On your back, arms extended toward ceiling, knees bent at 90° (shins parallel to floor). Slowly lower opposite arm and leg toward the floor without letting lower back arch off the ground. Return and switch sides. Move slowly. 10 each side, two sets." },
-          { id: "tt-s-4", name: "Reverse lunge", dose: "10 each × 2",
-            desc: "From standing, step one foot backward and lower until both knees are at about 90°. Front shin stays vertical. Drive through the front heel to return. Alternate legs. 10 each, two sets." },
-          { id: "tt-s-5", name: "Bird dog", dose: "10 each side",
+          { id: "tt-s-5", name: "Plank shoulder taps", dose: "10 each side",
+            desc: "Start in a high plank (straight arms), feet a little wider than shoulder-width for stability. Tap one hand to the opposite shoulder, keeping your hips as still as possible — resist rotating. Alternate sides. Slow and controlled; the stillness is the point." },
+          { id: "tt-s-7", name: "Bird dog", dose: "10 each side",
             desc: "From all fours, extend opposite arm and leg simultaneously (right arm + left leg, then switch). Hold for 2 seconds. Keep hips square to the floor — don't rotate. Move slowly." }
         ]},
-        { name: "Hamstring + hip mobility", time: "~10 min", items: [
+        { name: "Hamstring + hip mobility", time: "~9 min", items: [
           { id: "tt-m-1", name: "Standing forward fold", dose: "45s × 3", time: 45, sets: 3,
             desc: "Hinge at the hips, fold forward, let upper body hang. Bend knees as needed at first, work toward straight legs over time. Don't bounce or force. Breathe deeply. Three sets of 45 seconds." },
           { id: "tt-m-2", name: "Standing hamstring — right", dose: "45 sec", time: 45,
             desc: "Stand tall. Extend right leg forward, heel on the floor (or on a low step / bench if available), toes pointing up. Keep both legs straight. Hinge forward at the hips, keeping your back flat, until you feel the stretch in the back of the right thigh. Hands rest on the front leg or reach toward the toes." },
           { id: "tt-m-3", name: "Standing hamstring — left", dose: "45 sec", time: 45,
             desc: "Same as right side, mirrored. Left leg forward, heel down, toes up. Hinge from the hips with a flat back, feel the stretch in the back of the left thigh." },
-          { id: "tt-m-4", name: "Seated forward fold", dose: "45s × 2", time: 45, sets: 2,
-            desc: "Sit with legs straight out, feet flexed. Hinge from the hips (not by rounding your back) and reach toward your feet. Hold where you feel tension, don't force. Breathe. Two sets of 45 seconds." },
           { id: "tt-m-5", name: "Low lunge — right", dose: "45 sec", time: 45,
             desc: "Right foot forward, left knee on mat. Front shin vertical. Press hips gently forward, feeling stretch in the front of the left hip. Torso upright." },
           { id: "tt-m-6", name: "Low lunge — left", dose: "45 sec", time: 45,
@@ -406,7 +407,9 @@
   let expandedState = {};
   let timer = null;
   let audioCtx = null;
+  let wakeLock = null;
 
+  // ===== Audio =====
   function ensureAudioCtx() {
     if (!audioCtx) {
       try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -434,6 +437,25 @@
     } catch(e) {}
   }
 
+  // ===== Wake lock (keeps screen on during a timer so it doesn't pause / mute) =====
+  async function requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+      }
+    } catch(e) {}
+  }
+  function releaseWakeLock() {
+    try { if (wakeLock) { wakeLock.release(); wakeLock = null; } } catch(e) {}
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && timer) {
+      requestWakeLock();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    }
+  });
+
+  // ===== Storage (localStorage) =====
   async function safeGet(key) {
     try { return localStorage.getItem('morningRoutine:' + key); }
     catch(e) { return null; }
@@ -454,6 +476,7 @@
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  // ===== Render =====
   function render() {
     const r = routines[currentRoutine];
     document.getElementById('routine-title').textContent = r.name;
@@ -550,25 +573,28 @@
     else toggleDone(item.id);
   }
 
+  // ===== Timer =====
   const PREP_SECONDS = 5;
+  const REST_SECONDS = 10;
+  const CIRC = 2 * Math.PI * 46;
 
   function startTimer(item) {
     ensureAudioCtx();
+    requestWakeLock();
     const sets = item.sets || 1;
     timer = {
       item, sets, currentSet: 1,
       duration: item.time, remaining: item.time,
       paused: false, interval: null,
-      phase: 'prep', prepRemaining: PREP_SECONDS
+      phase: 'prep', prepRemaining: PREP_SECONDS, restRemaining: REST_SECONDS
     };
     document.getElementById('timer-exercise').textContent = item.name;
     document.getElementById('timer-set').textContent = 'Get ready';
     document.getElementById('timer-action').textContent = 'Skip';
     const modal = document.getElementById('timer-modal');
-    modal.classList.add('active');
-    modal.classList.add('prep');
-    const circumference = 2 * Math.PI * 46;
-    document.getElementById('ring-fg').style.strokeDasharray = circumference;
+    modal.classList.add('active', 'prep');
+    modal.classList.remove('rest');
+    document.getElementById('ring-fg').style.strokeDasharray = CIRC;
     updatePrepDisplay();
     runPrep();
   }
@@ -576,9 +602,7 @@
   function updatePrepDisplay() {
     if (!timer) return;
     document.getElementById('timer-display').textContent = timer.prepRemaining;
-    const circumference = 2 * Math.PI * 46;
-    // Ring fills up as prep counts down
-    document.getElementById('ring-fg').style.strokeDashoffset = circumference * (timer.prepRemaining / PREP_SECONDS);
+    document.getElementById('ring-fg').style.strokeDashoffset = CIRC * (timer.prepRemaining / PREP_SECONDS);
   }
 
   function runPrep() {
@@ -591,19 +615,21 @@
         if (timer.prepRemaining <= 3) playBeep(660, 0.08, 0.15);
       } else {
         clearInterval(timer.interval);
-        beginExercisePhase();
+        beginSet(1);
       }
     }, 1000);
   }
 
-  function beginExercisePhase() {
+  function beginSet(setNumber) {
     timer.phase = 'exercise';
+    timer.currentSet = setNumber;
+    timer.remaining = timer.duration;
+    const modal = document.getElementById('timer-modal');
+    modal.classList.remove('prep', 'rest');
     if (navigator.vibrate) navigator.vibrate(60);
     playBeep(880, 0.25, 0.25);
-    document.getElementById('timer-modal').classList.remove('prep');
-    document.getElementById('timer-set').textContent = timer.sets > 1 ? `Set 1 of ${timer.sets}` : 'Hold steady';
+    document.getElementById('timer-set').textContent = timer.sets > 1 ? `Set ${setNumber} of ${timer.sets}` : 'Hold steady';
     document.getElementById('timer-action').textContent = 'Pause';
-    const circumference = 2 * Math.PI * 46;
     document.getElementById('ring-fg').style.strokeDashoffset = 0;
     updateTimerDisplay();
     runTimer();
@@ -620,10 +646,7 @@
         if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
         playBeep(880, 0.35, 0.3);
         if (timer.currentSet < timer.sets) {
-          timer.currentSet++;
-          timer.remaining = timer.duration;
-          document.getElementById('timer-set').textContent = `Set ${timer.currentSet} of ${timer.sets}`;
-          setTimeout(() => { if (timer) runTimer(); }, 1500);
+          startRest();
         } else {
           finishTimer();
         }
@@ -636,9 +659,40 @@
     const m = Math.floor(timer.remaining / 60);
     const s = timer.remaining % 60;
     document.getElementById('timer-display').textContent = `${m}:${String(s).padStart(2,'0')}`;
-    const circumference = 2 * Math.PI * 46;
-    const offset = circumference * (1 - timer.remaining / timer.duration);
-    document.getElementById('ring-fg').style.strokeDashoffset = offset;
+    document.getElementById('ring-fg').style.strokeDashoffset = CIRC * (1 - timer.remaining / timer.duration);
+  }
+
+  function startRest() {
+    timer.phase = 'rest';
+    timer.restRemaining = REST_SECONDS;
+    const modal = document.getElementById('timer-modal');
+    modal.classList.remove('prep');
+    modal.classList.add('rest');
+    document.getElementById('timer-set').textContent = `Rest · set ${timer.currentSet + 1} of ${timer.sets} next`;
+    document.getElementById('timer-action').textContent = 'Skip';
+    updateRestDisplay();
+    runRest();
+  }
+
+  function updateRestDisplay() {
+    if (!timer) return;
+    document.getElementById('timer-display').textContent = timer.restRemaining;
+    document.getElementById('ring-fg').style.strokeDashoffset = CIRC * (timer.restRemaining / REST_SECONDS);
+  }
+
+  function runRest() {
+    if (timer.interval) clearInterval(timer.interval);
+    timer.interval = setInterval(() => {
+      if (!timer || timer.paused) return;
+      timer.restRemaining--;
+      if (timer.restRemaining > 0) {
+        updateRestDisplay();
+        if (timer.restRemaining <= 3) playBeep(660, 0.08, 0.15);
+      } else {
+        clearInterval(timer.interval);
+        beginSet(timer.currentSet + 1);
+      }
+    }, 1000);
   }
 
   function finishTimer() {
@@ -657,10 +711,11 @@
     if (timer && timer.interval) clearInterval(timer.interval);
     timer = null;
     const modal = document.getElementById('timer-modal');
-    modal.classList.remove('active');
-    modal.classList.remove('prep');
+    modal.classList.remove('active', 'prep', 'rest');
+    releaseWakeLock();
   }
 
+  // ===== Events =====
   document.querySelectorAll('.toggle button').forEach(btn => {
     btn.addEventListener('click', async () => {
       currentRoutine = btn.dataset.routine;
@@ -684,9 +739,11 @@
   document.getElementById('timer-action').addEventListener('click', () => {
     if (!timer) return;
     if (timer.phase === 'prep') {
-      // Skip the prep countdown — jump straight to exercise
       if (timer.interval) clearInterval(timer.interval);
-      beginExercisePhase();
+      beginSet(1);
+    } else if (timer.phase === 'rest') {
+      if (timer.interval) clearInterval(timer.interval);
+      beginSet(timer.currentSet + 1);
     } else {
       timer.paused = !timer.paused;
       document.getElementById('timer-action').textContent = timer.paused ? 'Resume' : 'Pause';
