@@ -435,8 +435,21 @@
   let viewYear, viewMonth;
 
   function ensureAudioCtx() {
-    if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {} }
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    if (!audioCtx) {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        audioCtx.onstatechange = () => { if (audioCtx.state !== 'running') audioCtx.resume().catch(()=>{}); };
+      } catch(e) { return; }
+    }
+    if (audioCtx.state !== 'running') audioCtx.resume().catch(()=>{});
+    if (!audioCtx._unlocked) {
+      try {
+        const b = audioCtx.createBuffer(1, 1, 22050);
+        const src = audioCtx.createBufferSource();
+        src.buffer = b; src.connect(audioCtx.destination); src.start(0);
+        audioCtx._unlocked = true;
+      } catch(e) {}
+    }
   }
   document.addEventListener('touchstart', ensureAudioCtx, { passive: true });
   document.addEventListener('click', ensureAudioCtx, { passive: true });
@@ -453,14 +466,14 @@
   }
   function playBeep(freq, dur, vol) {
     if (!audioCtx) return;
-    if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
-    tone(audioCtx.currentTime, freq || 880, dur || 0.35, vol || 0.25);
+    if (audioCtx.state !== 'running') audioCtx.resume().catch(()=>{});
+    tone(audioCtx.currentTime + 0.02, freq || 880, dur || 0.35, vol || 0.25);
   }
   function playBeeps(count, freq, gap) {
     if (!audioCtx) return;
-    if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
-    const f = freq || 880, g = gap || 0.34, dur = 0.18, vol = 0.3;
-    for (let i = 0; i < count; i++) tone(audioCtx.currentTime + i * g, f, dur, vol);
+    if (audioCtx.state !== 'running') audioCtx.resume().catch(()=>{});
+    const f = freq || 880, g = gap || 0.34, dur = 0.18, vol = 0.3, t0 = audioCtx.currentTime + 0.02;
+    for (let i = 0; i < count; i++) tone(t0 + i * g, f, dur, vol);
   }
 
   async function requestWakeLock() {
@@ -470,7 +483,7 @@
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && timer) {
       requestWakeLock();
-      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+      if (audioCtx && audioCtx.state !== 'running') audioCtx.resume().catch(()=>{});
     }
   });
 
