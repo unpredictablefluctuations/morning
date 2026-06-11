@@ -91,11 +91,12 @@
     background: var(--surface-2); border-radius: 12px; padding: 4px; gap: 4px;
   }
   .toggle button {
-    background: transparent; border: none; padding: 11px 8px;
-    font-family: 'Public Sans', sans-serif; font-size: 13px; font-weight: 500;
-    color: var(--text-mute); border-radius: 8px; cursor: pointer;
-    transition: all 0.2s; letter-spacing: 0.02em;
+    background: transparent; border: none; padding: 8px 8px;
+    font-family: 'Public Sans', sans-serif; border-radius: 8px; cursor: pointer;
+    transition: all 0.2s; color: var(--text-mute);
   }
+  .toggle button .t-name { display: block; font-size: 13px; font-weight: 500; letter-spacing: 0.02em; }
+  .toggle button .t-days { display: block; font-size: 10px; font-weight: 400; opacity: 0.65; margin-top: 1px; }
   .toggle button.active {
     background: var(--surface); color: var(--text);
     box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
@@ -274,6 +275,7 @@
   .cal-legend { margin: 26px 4px 0; display: flex; flex-wrap: wrap; gap: 10px 16px; }
   .cal-legend .item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-mute); }
   .cal-legend .sw { width: 15px; height: 15px; border-radius: 50%; flex-shrink: 0; }
+  .cal-hint { margin: 16px 4px 0; font-size: 12px; color: var(--text-faint); line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -284,7 +286,7 @@
       <div class="header-top">
         <div>
           <p class="label">Morning routine</p>
-          <h1 class="title" id="routine-title">Mon · Wed · Fri</h1>
+          <h1 class="title" id="routine-title">Standard</h1>
         </div>
         <button class="icon-btn" id="open-history" aria-label="View activity calendar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -293,8 +295,8 @@
         </button>
       </div>
       <div class="toggle">
-        <button data-routine="mwf" class="active">Mon · Wed · Fri</button>
-        <button data-routine="tt">Tue · Thu</button>
+        <button data-routine="mwf" class="active"><span class="t-name">Standard</span><span class="t-days">(Mon, Wed, Fri)</span></button>
+        <button data-routine="tt"><span class="t-name">Rest</span><span class="t-days">(Tue, Thu)</span></button>
       </div>
       <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
       <div class="progress-text">
@@ -339,6 +341,7 @@
     <div class="cal-head" id="cal-head"></div>
     <div class="cal-grid" id="cal-grid"></div>
     <div class="cal-legend" id="cal-legend"></div>
+    <p class="cal-hint">Tap any past or current day to set or clear it — cycles Standard → Rest → Other → empty.</p>
   </div>
 
 </div>
@@ -364,7 +367,7 @@
 <script>
   const routines = {
     mwf: {
-      name: "Mon · Wed · Fri", time: "~25–30 min",
+      name: "Standard", time: "~25–30 min",
       sections: [
         { name: "Warm-up", time: "~3 min", items: [
           { id: "mwf-w-1", name: "Cat-cow", dose: "8–10 reps", desc: "On all fours, hands under shoulders, knees under hips. Inhale and drop your belly toward the floor, lifting your chest and tailbone (cow). Exhale and round your spine to the ceiling, tucking your chin and tailbone (cat). Move slowly, syncing breath with motion." },
@@ -395,7 +398,7 @@
       ]
     },
     tt: {
-      name: "Tue · Thu", time: "~24–28 min",
+      name: "Rest", time: "~26–30 min",
       sections: [
         { name: "Activation", time: "~4 min", items: [
           { id: "tt-a-1", name: "Cat-cow", dose: "10 reps", desc: "On all fours, hands under shoulders, knees under hips. Inhale, drop belly and lift chest (cow). Exhale, round spine and tuck chin (cat). Slow, breath-synced." },
@@ -403,8 +406,9 @@
           { id: "tt-a-3", name: "Leg swings", dose: "15 each", desc: "Stand on one leg, use a wall for balance. Swing the other leg forward and back, kept relatively straight. Let momentum work, don't force range." },
           { id: "tt-a-4", name: "Inchworm", dose: "5 reps", desc: "Hinge from standing, hands to floor, walk out to plank, walk back, stand. Slow and controlled." }
         ]},
-        { name: "Strength + core", time: "~10 min", items: [
+        { name: "Strength + core", time: "~12 min", items: [
           { id: "tt-s-1", name: "Glute bridge", dose: "15 × 2", desc: "On your back, feet flat, hip-width apart, heels close to glutes. Drive hips up through heels, squeeze glutes at the top. Pause 2 seconds, then lower with control. Two sets of 15." },
+          { id: "tt-s-2", name: "Single-leg deadlift", dose: "8 each × 2", desc: "Stand on one leg with a soft (not locked) knee. Hinge at the hip, sending the other leg straight behind you as your torso tips forward. Keep back flat, reach toward the ground. Return to standing by squeezing glutes. Go slow — balance is part of the work. 8 reps each leg, two sets. This is the one exercise that strengthens the hamstring through its range, complementing the stretching." },
           { id: "tt-s-8", name: "Push-ups", dose: "10 reps", desc: "Hands slightly wider than shoulders, elbows tucked around 45°. Lower until chest is just above the floor, then push back up, body in one straight line. Keep it controlled — no need to grind, you have frisbee later." },
           { id: "tt-s-4", name: "Dead bug", dose: "10 each × 2", desc: "On your back, arms extended toward ceiling, knees bent at 90° (shins parallel to floor). Slowly lower opposite arm and leg toward the floor without letting lower back arch off the ground. Return and switch sides. Move slowly. 10 each side, two sets." },
           { id: "tt-s-5", name: "Plank shoulder taps", dose: "10 each side", desc: "Start in a high plank (straight arms), feet a little wider than shoulder-width for stability. Tap one hand to the opposite shoulder, keeping your hips as still as possible — resist rotating. Alternate sides. Slow and controlled; the stillness is the point." },
@@ -433,6 +437,7 @@
   let audioCtx = null;
   let wakeLock = null;
   let viewYear, viewMonth;
+  let suppressLog = true;
 
   function ensureAudioCtx() {
     if (!audioCtx) {
@@ -489,10 +494,19 @@
 
   function safeGet(key) { try { return localStorage.getItem('morningRoutine:' + key); } catch(e) { return null; } }
   function safeSet(key, val) { try { localStorage.setItem('morningRoutine:' + key, val); } catch(e) {} }
+  function safeRemove(key) { try { localStorage.removeItem('morningRoutine:' + key); } catch(e) {} }
 
   function loadState() {
     const r = safeGet('lastRoutine');
     if (r) currentRoutine = r;
+    // Day-scope the checklists: on the first open of a new day, clear yesterday's ticks
+    // so a stale fully-ticked list can't be auto-logged as today's completion.
+    const today = todayStr();
+    if (safeGet('checkedDate') !== today) {
+      safeRemove('checked:mwf');
+      safeRemove('checked:tt');
+      safeSet('checkedDate', today);
+    }
     const c = safeGet('checked:' + currentRoutine);
     checkedState = c ? JSON.parse(c) : {};
     const h = safeGet('history');
@@ -583,7 +597,7 @@
     document.getElementById('progress-bar').style.width = pct + '%';
     document.getElementById('progress-count').textContent = done + ' / ' + total + ' complete';
     const banner = document.getElementById('complete-banner');
-    if (done === total && total > 0) { banner.classList.add('show'); logToday(); }
+    if (done === total && total > 0) { banner.classList.add('show'); if (!suppressLog) logToday(); }
     else banner.classList.remove('show');
     updateActionButtons();
   }
@@ -645,15 +659,16 @@
       timer.remaining--; updateTimerDisplay();
       if (timer.remaining <= 0) {
         clearInterval(timer.interval);
+        playBeep(880, 0.25, 0.28);
         if (timer.currentSet < timer.sets) {
-          playBeep(880, 0.3, 0.28);
           if (navigator.vibrate) navigator.vibrate([100, 60, 100]);
           startRest();
         } else {
-          playBeeps(5);
-          if (navigator.vibrate) navigator.vibrate([120, 60, 120, 60, 120, 60, 120, 60, 120]);
+          if (navigator.vibrate) navigator.vibrate([120, 60, 120, 60, 120]);
           finishTimer();
         }
+      } else if (timer.remaining <= 3) {
+        playBeep(660, 0.08, 0.15);
       }
     }, 1000);
   }
@@ -667,7 +682,7 @@
     timer.phase = 'rest'; timer.restRemaining = REST_SECONDS;
     const modal = document.getElementById('timer-modal');
     modal.classList.remove('prep'); modal.classList.add('rest');
-    document.getElementById('timer-set').textContent = 'Rest · set ' + (timer.currentSet + 1) + ' of ' + timer.sets + ' next';
+    document.getElementById('timer-set').textContent = 'Rest';
     document.getElementById('timer-action').textContent = 'Skip';
     updateRestDisplay(); runRest();
   }
@@ -738,8 +753,7 @@
       const day = document.createElement('div'); day.className = 'cal-day'; day.textContent = d;
 
       if (workoutType) {
-        if (isWeekend) { day.style.border = '1.5px solid var(--bonus)'; day.style.color = 'var(--bonus)'; }
-        else { day.style.background = (workoutType === 'mwf') ? 'var(--cal-mwf)' : 'var(--cal-tt)'; day.style.color = '#fff'; day.style.fontWeight = '500'; }
+        day.style.background = (workoutType === 'mwf') ? 'var(--cal-mwf)' : 'var(--cal-tt)'; day.style.color = '#fff'; day.style.fontWeight = '500';
         if (hasAlt) { const dot = document.createElement('span'); dot.className = 'cal-dot'; day.appendChild(dot); }
         if (isToday) { day.style.outline = '2px solid var(--text)'; day.style.outlineOffset = '2px'; }
       } else if (hasAlt) {
@@ -755,16 +769,16 @@
         day.style.color = 'var(--text-faint)'; day.style.opacity = '0.45';
       }
 
+      if (isPast || isToday) { day.style.cursor = 'pointer'; cell.addEventListener('click', () => cycleDay(ds)); }
       cell.appendChild(day); grid.appendChild(cell);
     }
 
     const legend = document.getElementById('cal-legend');
     legend.innerHTML = '';
     const items = [
-      { type: 'dot', color: 'var(--cal-mwf)', label: 'Mon / Wed / Fri' },
-      { type: 'dot', color: 'var(--cal-tt)', label: 'Tue / Thu' },
+      { type: 'dot', color: 'var(--cal-mwf)', label: 'Standard' },
+      { type: 'dot', color: 'var(--cal-tt)', label: 'Rest' },
       { type: 'dot', color: 'var(--cal-alt)', label: 'Other activity' },
-      { type: 'ring', border: '1.5px solid var(--bonus)', label: 'Weekend bonus' },
       { type: 'ring', border: '1.5px dashed var(--text-faint)', label: 'Missed' },
       { type: 'ring', border: '2px solid var(--text)', label: 'Today' }
     ];
@@ -776,6 +790,15 @@
       const lb = document.createElement('span'); lb.textContent = it.label; row.appendChild(lb);
       legend.appendChild(row);
     });
+  }
+
+  function cycleDay(ds) {
+    const arr = history[ds] || [];
+    const state = arr.indexOf('mwf') !== -1 ? 'mwf' : (arr.indexOf('tt') !== -1 ? 'tt' : (arr.indexOf('alt') !== -1 ? 'alt' : 'none'));
+    const next = { none: 'mwf', mwf: 'tt', tt: 'alt', alt: 'none' }[state];
+    if (next === 'none') delete history[ds]; else history[ds] = [next];
+    saveHistory();
+    renderCalendar();
   }
 
   function openHistory() {
@@ -840,6 +863,7 @@
 
   loadState();
   render();
+  suppressLog = false;
 </script>
 </body>
 </html>
