@@ -276,6 +276,75 @@
   .cal-legend .item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-mute); }
   .cal-legend .sw { width: 15px; height: 15px; border-radius: 50%; flex-shrink: 0; }
   .cal-hint { margin: 16px 4px 0; font-size: 12px; color: var(--text-faint); line-height: 1.5; }
+
+  /* Dose pill as an edit control */
+  .ex-dose { font-family: 'JetBrains Mono', monospace; border: none; cursor: pointer; }
+  .ex-dose.customised { background: var(--accent-soft); color: var(--accent); }
+  .exercise.done .ex-dose.customised { background: transparent; }
+
+  /* Edit modal */
+  .edit-modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    display: none; align-items: center; justify-content: center; z-index: 110; padding: 24px;
+  }
+  .edit-modal.active { display: flex; }
+  .edit-card { background: var(--surface); border-radius: 24px; padding: 28px 24px 22px; width: 100%; max-width: 360px; }
+  .edit-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 500; margin: 0 0 4px; color: var(--text); }
+  .edit-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 22px; }
+  .stepper-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .stepper-label { font-size: 14px; color: var(--text-mute); }
+  .stepper { display: flex; align-items: center; gap: 4px; background: var(--surface-2); border-radius: 10px; padding: 4px; }
+  .stepper button {
+    width: 38px; height: 38px; border: none; background: transparent; color: var(--text);
+    font-size: 20px; font-weight: 500; border-radius: 8px; cursor: pointer; line-height: 1;
+  }
+  .stepper button:active { background: var(--border); }
+  .stepper span {
+    min-width: 64px; text-align: center; font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; font-weight: 500; color: var(--text);
+  }
+  .edit-label { display: block; font-size: 13px; color: var(--text-mute); margin-bottom: 7px; }
+  .edit-input {
+    width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text);
+    font-family: 'Public Sans', sans-serif; font-size: 15px;
+  }
+  .edit-input:focus { outline: none; border-color: var(--accent); }
+  .edit-actions { display: flex; gap: 10px; margin-top: 22px; }
+  .edit-actions button {
+    flex: 1; padding: 13px; border: none; border-radius: 12px;
+    font-family: 'Public Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+  .edit-revert {
+    display: block; width: 100%; margin-top: 10px; padding: 10px;
+    background: transparent; border: none; color: var(--text-faint);
+    font-family: 'Public Sans', sans-serif; font-size: 12.5px; cursor: pointer;
+  }
+  .edit-revert:active { color: var(--text-mute); }
+
+  /* Progression log */
+  .prog-section { margin: 34px 4px 0; padding-top: 24px; border-top: 1px solid var(--border); }
+  .prog-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500; color: var(--text); margin: 0 0 4px; }
+  .prog-caption { font-size: 12px; color: var(--text-faint); margin: 0 0 18px; line-height: 1.5; }
+  .prog-day { margin-bottom: 16px; }
+  .prog-date {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint);
+    text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 7px;
+  }
+  .prog-entry {
+    display: flex; align-items: baseline; gap: 8px; padding: 8px 0;
+    border-bottom: 1px solid var(--border); font-size: 13.5px;
+  }
+  .prog-entry:last-child { border-bottom: none; }
+  .prog-name { color: var(--text); flex: 1; min-width: 0; }
+  .prog-change { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-mute); white-space: nowrap; }
+  .prog-change .to { color: var(--accent); font-weight: 500; }
+  .prog-del {
+    background: transparent; border: none; color: var(--text-faint);
+    cursor: pointer; padding: 2px 4px; font-size: 15px; line-height: 1; flex-shrink: 0;
+  }
+  .prog-empty { font-size: 13px; color: var(--text-faint); line-height: 1.6; margin: 0; }
 </style>
 </head>
 <body>
@@ -342,6 +411,11 @@
     <div class="cal-grid" id="cal-grid"></div>
     <div class="cal-legend" id="cal-legend"></div>
     <p class="cal-hint">Tap any past or current day to set or clear it — cycles Standard → Rest → Other → empty.</p>
+    <div class="prog-section">
+      <h2 class="prog-title">Progression log</h2>
+      <p class="prog-caption">Every time you change a target, it's recorded here.</p>
+      <div id="prog-list"></div>
+    </div>
   </div>
 
 </div>
@@ -361,6 +435,43 @@
       <button class="btn-secondary" id="timer-cancel">Cancel</button>
       <button class="btn-primary" id="timer-action">Pause</button>
     </div>
+  </div>
+</div>
+
+<div class="edit-modal" id="edit-modal">
+  <div class="edit-card">
+    <p class="edit-title" id="edit-title">Exercise</p>
+    <p class="edit-sub" id="edit-sub">Current target</p>
+
+    <div id="edit-timed" style="display:none;">
+      <div class="stepper-row">
+        <span class="stepper-label">Duration</span>
+        <div class="stepper">
+          <button data-act="time-minus" aria-label="Decrease duration">−</button>
+          <span id="edit-time-val">45s</span>
+          <button data-act="time-plus" aria-label="Increase duration">+</button>
+        </div>
+      </div>
+      <div class="stepper-row">
+        <span class="stepper-label">Sets</span>
+        <div class="stepper">
+          <button data-act="sets-minus" aria-label="Decrease sets">−</button>
+          <span id="edit-sets-val">1</span>
+          <button data-act="sets-plus" aria-label="Increase sets">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="edit-reps" style="display:none;">
+      <label class="edit-label" for="edit-reps-input">Target</label>
+      <input class="edit-input" id="edit-reps-input" type="text" autocomplete="off">
+    </div>
+
+    <div class="edit-actions">
+      <button class="btn-secondary" id="edit-cancel">Cancel</button>
+      <button class="btn-primary" id="edit-save">Save</button>
+    </div>
+    <button class="edit-revert" id="edit-revert">Revert to default</button>
   </div>
 </div>
 
@@ -433,6 +544,8 @@
   let checkedState = {};
   let expandedState = {};
   let history = {};
+  let overrides = {};
+  let progLog = [];
   let timer = null;
   let audioCtx = null;
   let wakeLock = null;
@@ -512,6 +625,10 @@
     const h = safeGet('history');
     history = h ? JSON.parse(h) : {};
     Object.keys(history).forEach(k => { if (typeof history[k] === 'string') history[k] = [history[k]]; });
+    const o = safeGet('overrides');
+    overrides = o ? JSON.parse(o) : {};
+    const p = safeGet('progLog');
+    progLog = p ? JSON.parse(p) : [];
     expandedState = {};
   }
 
@@ -545,6 +662,46 @@
     }
   }
 
+  function saveOverrides() { safeSet('overrides', JSON.stringify(overrides)); }
+  function saveProgLog() { safeSet('progLog', JSON.stringify(progLog)); }
+
+  // Build a human-readable dose label from timer values
+  function fmtDose(time, sets) {
+    let base;
+    if (time >= 60 && time % 60 === 0) base = (time / 60) + ' min';
+    else if (time > 60) base = Math.floor(time / 60) + ':' + String(time % 60).padStart(2, '0');
+    else base = time + ' sec';
+    return sets > 1 ? (base + ' × ' + sets) : base;
+  }
+
+  // Merge an exercise definition with any stored override
+  function eff(item) {
+    const ov = overrides[item.id];
+    if (!ov) return item;
+    const merged = Object.assign({}, item);
+    if (typeof ov.time === 'number') merged.time = ov.time;
+    if (typeof ov.sets === 'number') merged.sets = ov.sets;
+    if (typeof ov.dose === 'string') merged.dose = ov.dose;
+    else if (item.time) merged.dose = fmtDose(merged.time, merged.sets || 1);
+    return merged;
+  }
+  function isCustomised(item) { return !!overrides[item.id]; }
+
+  function findItem(id) {
+    for (const key in routines) {
+      for (const s of routines[key].sections) {
+        for (const it of s.items) if (it.id === id) return it;
+      }
+    }
+    return null;
+  }
+
+  function addProgEntry(exId, name, from, to) {
+    progLog.push({ date: todayStr(), id: exId, name: name, from: from, to: to });
+    saveProgLog();
+  }
+
+
   function render() {
     const r = routines[currentRoutine];
     document.getElementById('routine-title').textContent = r.name;
@@ -559,23 +716,30 @@
       header.className = 'section-header';
       header.innerHTML = '<h2 class="section-name">' + escapeHtml(section.name) + '</h2><span class="section-time">' + escapeHtml(section.time) + '</span>';
       sectionEl.appendChild(header);
-      section.items.forEach(item => {
+      section.items.forEach(baseItem => {
+        const item = eff(baseItem);
         const card = document.createElement('div');
         card.className = 'exercise' + (checkedState[item.id] ? ' done' : '') + (expandedState[item.id] ? ' expanded' : '');
         card.dataset.id = item.id;
         const timerIcon = item.time ? '<span class="timer-icon">⏱</span>' : '';
+        const custClass = isCustomised(baseItem) ? ' customised' : '';
         card.innerHTML =
           '<div class="ex-row">' +
             '<div class="check"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 6.5 11.5 13 5"/></svg></div>' +
             '<div class="ex-body"><p class="ex-name">' + escapeHtml(item.name) + '</p></div>' +
-            '<div class="ex-dose">' + escapeHtml(item.dose) + timerIcon + '</div>' +
+            '<button class="ex-dose' + custClass + '" aria-label="Edit target">' + escapeHtml(item.dose) + timerIcon + '</button>' +
             '<button class="ex-expand" aria-label="Toggle description"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 6 8 10 12 6"/></svg></button>' +
           '</div>' +
           '<div class="ex-desc"><div class="ex-desc-inner">' + escapeHtml(item.desc || '') + '</div></div>';
         const row = card.querySelector('.ex-row');
         const expandBtn = card.querySelector('.ex-expand');
-        row.addEventListener('click', e => { if (e.target.closest('.ex-expand')) return; handleExerciseClick(item); });
+        const doseBtn = card.querySelector('.ex-dose');
+        row.addEventListener('click', e => {
+          if (e.target.closest('.ex-expand') || e.target.closest('.ex-dose')) return;
+          handleExerciseClick(baseItem);
+        });
         expandBtn.addEventListener('click', e => { e.stopPropagation(); toggleExpand(item.id); });
+        doseBtn.addEventListener('click', e => { e.stopPropagation(); openEdit(baseItem); });
         sectionEl.appendChild(card);
       });
       container.appendChild(sectionEl);
@@ -611,7 +775,10 @@
     if (checkedState[itemId] && navigator.vibrate) navigator.vibrate(15);
   }
 
-  function handleExerciseClick(item) { if (item.time && !checkedState[item.id]) startTimer(item); else toggleDone(item.id); }
+  function handleExerciseClick(baseItem) {
+    const item = eff(baseItem);
+    if (item.time && !checkedState[item.id]) startTimer(item); else toggleDone(item.id);
+  }
 
   const PREP_SECONDS = 5, REST_SECONDS = 15, CIRC = 2 * Math.PI * 46;
 
@@ -792,6 +959,111 @@
     });
   }
 
+  // ===== Progression editing =====
+  let editing = null;
+
+  function openEdit(baseItem) {
+    const cur = eff(baseItem);
+    editing = { base: baseItem, time: cur.time, sets: cur.sets || 1 };
+    document.getElementById('edit-title').textContent = baseItem.name;
+    document.getElementById('edit-sub').textContent = 'Current · ' + cur.dose;
+    const timed = !!baseItem.time;
+    document.getElementById('edit-timed').style.display = timed ? 'block' : 'none';
+    document.getElementById('edit-reps').style.display = timed ? 'none' : 'block';
+    if (timed) updateEditSteppers();
+    else document.getElementById('edit-reps-input').value = cur.dose;
+    document.getElementById('edit-revert').style.display = isCustomised(baseItem) ? 'block' : 'none';
+    document.getElementById('edit-modal').classList.add('active');
+  }
+
+  function updateEditSteppers() {
+    document.getElementById('edit-time-val').textContent = fmtDose(editing.time, 1);
+    document.getElementById('edit-sets-val').textContent = editing.sets;
+  }
+
+  function closeEdit() {
+    editing = null;
+    document.getElementById('edit-modal').classList.remove('active');
+  }
+
+  function saveEdit() {
+    if (!editing) return;
+    const baseItem = editing.base;
+    const before = eff(baseItem).dose;
+    if (baseItem.time) {
+      const ov = {};
+      if (editing.time !== baseItem.time) ov.time = editing.time;
+      if (editing.sets !== (baseItem.sets || 1)) ov.sets = editing.sets;
+      if (Object.keys(ov).length) overrides[baseItem.id] = ov; else delete overrides[baseItem.id];
+    } else {
+      const val = document.getElementById('edit-reps-input').value.trim();
+      if (val && val !== baseItem.dose) overrides[baseItem.id] = { dose: val };
+      else delete overrides[baseItem.id];
+    }
+    saveOverrides();
+    const after = eff(baseItem).dose;
+    if (after !== before) addProgEntry(baseItem.id, baseItem.name, before, after);
+    closeEdit();
+    render();
+  }
+
+  function revertEdit() {
+    if (!editing) return;
+    const baseItem = editing.base;
+    const before = eff(baseItem).dose;
+    delete overrides[baseItem.id];
+    saveOverrides();
+    const after = eff(baseItem).dose;
+    if (after !== before) addProgEntry(baseItem.id, baseItem.name, before, after);
+    closeEdit();
+    render();
+  }
+
+  function renderProgLog() {
+    const list = document.getElementById('prog-list');
+    list.innerHTML = '';
+    if (!progLog.length) {
+      list.innerHTML = '<p class="prog-empty">No changes recorded yet. Tap any exercise\u2019s target to adjust it.</p>';
+      return;
+    }
+    const byDate = {};
+    progLog.forEach((e, i) => { (byDate[e.date] = byDate[e.date] || []).push({ e: e, i: i }); });
+    Object.keys(byDate).sort().reverse().forEach(date => {
+      const wrap = document.createElement('div');
+      wrap.className = 'prog-day';
+      const dLabel = document.createElement('p');
+      dLabel.className = 'prog-date';
+      const parts = date.split('-');
+      dLabel.textContent = new Date(+parts[0], +parts[1] - 1, +parts[2])
+        .toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+      wrap.appendChild(dLabel);
+      byDate[date].slice().reverse().forEach(rec => {
+        const row = document.createElement('div');
+        row.className = 'prog-entry';
+        const nm = document.createElement('span');
+        nm.className = 'prog-name';
+        nm.textContent = rec.e.name;
+        const ch = document.createElement('span');
+        ch.className = 'prog-change';
+        ch.innerHTML = escapeHtml(rec.e.from) + ' → <span class="to">' + escapeHtml(rec.e.to) + '</span>';
+        const del = document.createElement('button');
+        del.className = 'prog-del';
+        del.setAttribute('aria-label', 'Delete entry');
+        del.textContent = '×';
+        del.addEventListener('click', () => {
+          if (confirm('Delete this log entry? Your current target will not change.')) {
+            progLog.splice(rec.i, 1);
+            saveProgLog();
+            renderProgLog();
+          }
+        });
+        row.appendChild(nm); row.appendChild(ch); row.appendChild(del);
+        wrap.appendChild(row);
+      });
+      list.appendChild(wrap);
+    });
+  }
+
   function cycleDay(ds) {
     const arr = history[ds] || [];
     const state = arr.indexOf('mwf') !== -1 ? 'mwf' : (arr.indexOf('tt') !== -1 ? 'tt' : (arr.indexOf('alt') !== -1 ? 'alt' : 'none'));
@@ -804,6 +1076,7 @@
   function openHistory() {
     const now = new Date(); viewYear = now.getFullYear(); viewMonth = now.getMonth();
     renderCalendar();
+    renderProgLog();
     document.getElementById('main-view').classList.add('hidden');
     document.getElementById('history-view').classList.add('active');
     window.scrollTo(0, 0);
@@ -854,6 +1127,25 @@
     if (timer.phase === 'prep') { if (timer.interval) clearInterval(timer.interval); beginSet(1); }
     else if (timer.phase === 'rest') { if (timer.interval) clearInterval(timer.interval); beginSet(timer.currentSet + 1); }
     else { timer.paused = !timer.paused; document.getElementById('timer-action').textContent = timer.paused ? 'Resume' : 'Pause'; }
+  });
+
+  document.getElementById('edit-cancel').addEventListener('click', closeEdit);
+  document.getElementById('edit-save').addEventListener('click', saveEdit);
+  document.getElementById('edit-revert').addEventListener('click', revertEdit);
+  document.getElementById('edit-modal').addEventListener('click', e => {
+    if (e.target.id === 'edit-modal') closeEdit();
+  });
+  document.querySelectorAll('.stepper button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!editing) return;
+      const act = btn.dataset.act;
+      const step = editing.time >= 60 ? 15 : 5;
+      if (act === 'time-plus') editing.time = Math.min(600, editing.time + step);
+      else if (act === 'time-minus') editing.time = Math.max(5, editing.time - (editing.time > 60 ? 15 : 5));
+      else if (act === 'sets-plus') editing.sets = Math.min(10, editing.sets + 1);
+      else if (act === 'sets-minus') editing.sets = Math.max(1, editing.sets - 1);
+      updateEditSteppers();
+    });
   });
 
   document.getElementById('open-history').addEventListener('click', openHistory);
