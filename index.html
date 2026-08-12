@@ -496,14 +496,15 @@
           { id: "mwf-m-7", name: "Squats", dose: "25 reps", desc: "Feet shoulder-width apart, toes slightly turned out. Sit back as if into a chair, keeping chest up and weight in your heels. Descend until thighs are roughly parallel to the floor (or as deep as mobility allows). Drive through heels to stand." },
           { id: "mwf-m-8", name: "Glute bridge", dose: "15 reps", desc: "Lie on your back, knees bent, feet flat about hip-width apart, heels close to your glutes. Drive through your heels to lift hips, squeezing glutes hard at the top. Body forms a straight line from knees to shoulders. Pause 2 seconds at the top, then lower with control." },
           { id: "mwf-m-9", name: "Knee push-ups", dose: "10–15 reps", desc: "Same form as regular push-ups but with knees on the floor. Body still forms a straight line from knees to head — don't pike hips up. Elbows tucked tight to the body." },
-          { id: "mwf-m-10", name: "Superman hold", dose: "5–8 × 5–10s", desc: "Lie face down, arms extended forward, legs straight. Simultaneously lift arms, chest, and legs off the floor, squeezing lower back and glutes. Hold for 5–10 seconds, then lower with control. Look at the floor, not up — keep neck neutral." }
+          { id: "mwf-m-10", name: "Superman hold", dose: "5–8 × 5–10s", desc: "Lie face down, arms extended forward, legs straight. Simultaneously lift arms, chest, and legs off the floor, squeezing lower back and glutes. Hold for 5–10 seconds, then lower with control. Look at the floor, not up — keep neck neutral." },
+          { id: "mwf-m-11", name: "Bird dog", dose: "20 (10 each side)", desc: "From all fours, extend opposite arm and leg simultaneously (right arm + left leg, then switch). Hold for 2 seconds. Keep hips square to the floor — don't rotate. Move slowly. 10 each side, 20 total." }
         ]},
         { name: "Cool-down stretch", time: "~5 min", items: [
           { id: "mwf-c-1", name: "Standing forward fold", dose: "45s × 2", time: 45, sets: 2, desc: "From standing, hinge at the hips and fold forward, letting upper body hang. Bend knees as much as you need to at first. Over time, work toward straighter legs. Let gravity do the work — don't bounce or force it. Breathe deeply." },
           { id: "mwf-c-2", name: "Standing hamstring — right", dose: "45 sec", time: 45, desc: "Stand tall. Extend right leg forward, heel on the floor (or on a low step / bench if available), toes pointing up. Keep both legs straight. Hinge forward at the hips, keeping your back flat, until you feel the stretch in the back of the right thigh. Hands rest on the front leg or reach toward the toes." },
           { id: "mwf-c-3", name: "Standing hamstring — left", dose: "45 sec", time: 45, desc: "Same as right side, mirrored. Left leg forward, heel down, toes up. Hinge from the hips with a flat back, feel the stretch in the back of the left thigh." },
-          { id: "mwf-c-4", name: "Low lunge — right", dose: "30 sec", time: 30, desc: "Step right foot forward into a lunge, lower the left knee to the mat. Keep front shin vertical (knee over ankle). Gently press hips forward, feeling a stretch in the front of the left hip. Keep torso upright." },
-          { id: "mwf-c-5", name: "Low lunge — left", dose: "30 sec", time: 30, desc: "Same as right side, mirrored. Left foot forward, right knee on the mat. Hips pressed forward." },
+          { id: "mwf-c-4", name: "Figure-four — right", dose: "45 sec", time: 45, desc: "On your back, knees bent. Cross right ankle over left knee (creating a '4' shape). Reach through and pull both legs toward your chest. Releases right glute and hip rotators." },
+          { id: "mwf-c-5", name: "Figure-four — left", dose: "45 sec", time: 45, desc: "Mirrored. Left ankle over right knee, pull both legs toward chest." },
           { id: "mwf-c-6", name: "Child's pose", dose: "45 sec", time: 45, desc: "Kneel with knees apart, big toes touching. Sit hips back toward your heels and fold forward, arms extended or resting by your sides. Forehead rests on the mat. Breathe into your lower back." }
         ]}
       ]
@@ -572,20 +573,20 @@
   document.addEventListener('touchstart', ensureAudioCtx, { passive: true });
   document.addEventListener('click', ensureAudioCtx, { passive: true });
 
-  function tone(t, freq, dur, vol) {
+  function tone(t, freq, dur, vol, type) {
     try {
       const o = audioCtx.createOscillator(), g = audioCtx.createGain();
       o.connect(g); g.connect(audioCtx.destination);
-      o.frequency.value = freq; o.type = 'sine';
+      o.frequency.value = freq; o.type = type || 'sine';
       g.gain.setValueAtTime(vol, t);
       g.gain.exponentialRampToValueAtTime(0.001, t + dur);
       o.start(t); o.stop(t + dur);
     } catch(e) {}
   }
-  function playBeep(freq, dur, vol) {
+  function playBeep(freq, dur, vol, type) {
     if (!audioCtx) return;
     if (audioCtx.state !== 'running') audioCtx.resume().catch(()=>{});
-    tone(audioCtx.currentTime + 0.02, freq || 880, dur || 0.35, vol || 0.25);
+    tone(audioCtx.currentTime + 0.02, freq || 880, dur || 0.35, vol || 0.25, type);
   }
   function playBeeps(count, freq, gap) {
     if (!audioCtx) return;
@@ -804,7 +805,7 @@
     timer.interval = setInterval(() => {
       if (!timer || timer.paused) return;
       timer.prepRemaining--;
-      if (timer.prepRemaining > 0) { updatePrepDisplay(); if (timer.prepRemaining <= 3) playBeep(660, 0.08, 0.15); }
+      if (timer.prepRemaining > 0) { updatePrepDisplay(); if (timer.prepRemaining <= 3) playBeep(660, 0.1, 0.45, 'triangle'); }
       else { clearInterval(timer.interval); beginSet(1); }
     }, 1000);
   }
@@ -813,7 +814,7 @@
     const modal = document.getElementById('timer-modal');
     modal.classList.remove('prep', 'rest');
     if (navigator.vibrate) navigator.vibrate(60);
-    playBeep(880, 0.25, 0.25);
+    playBeep(880, 0.25, 0.6, 'square');
     document.getElementById('timer-set').textContent = timer.sets > 1 ? ('Set ' + setNumber + ' of ' + timer.sets) : 'Hold steady';
     document.getElementById('timer-action').textContent = 'Pause';
     document.getElementById('ring-fg').style.strokeDashoffset = 0;
@@ -826,7 +827,7 @@
       timer.remaining--; updateTimerDisplay();
       if (timer.remaining <= 0) {
         clearInterval(timer.interval);
-        playBeep(880, 0.25, 0.28);
+        playBeep(880, 0.3, 0.6, 'square');
         if (timer.currentSet < timer.sets) {
           if (navigator.vibrate) navigator.vibrate([100, 60, 100]);
           startRest();
@@ -835,7 +836,7 @@
           finishTimer();
         }
       } else if (timer.remaining <= 3) {
-        playBeep(660, 0.08, 0.15);
+        playBeep(660, 0.1, 0.45, 'triangle');
       }
     }, 1000);
   }
@@ -863,7 +864,7 @@
     timer.interval = setInterval(() => {
       if (!timer || timer.paused) return;
       timer.restRemaining--;
-      if (timer.restRemaining > 0) { updateRestDisplay(); if (timer.restRemaining <= 3) playBeep(660, 0.08, 0.15); }
+      if (timer.restRemaining > 0) { updateRestDisplay(); if (timer.restRemaining <= 3) playBeep(660, 0.1, 0.45, 'triangle'); }
       else { clearInterval(timer.interval); beginSet(timer.currentSet + 1); }
     }, 1000);
   }
@@ -1139,9 +1140,8 @@
     btn.addEventListener('click', () => {
       if (!editing) return;
       const act = btn.dataset.act;
-      const step = editing.time >= 60 ? 15 : 5;
-      if (act === 'time-plus') editing.time = Math.min(600, editing.time + step);
-      else if (act === 'time-minus') editing.time = Math.max(5, editing.time - (editing.time > 60 ? 15 : 5));
+      if (act === 'time-plus') editing.time = Math.min(600, editing.time + 5);
+      else if (act === 'time-minus') editing.time = Math.max(5, editing.time - 5);
       else if (act === 'sets-plus') editing.sets = Math.min(10, editing.sets + 1);
       else if (act === 'sets-minus') editing.sets = Math.max(1, editing.sets - 1);
       updateEditSteppers();
