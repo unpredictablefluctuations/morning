@@ -24,8 +24,8 @@
     --bonus: #B0791E;
     --cal-mwf: #5A7A3E;
     --cal-tt: #4F7A8A;
-    --cal-alt: #6E5A9E;
-    --alt-ink: #5B4A85;
+    --cal-alt: #C2611F;
+    --alt-ink: #8F4A17;
     --border: #E8E2D3;
     --done-bg: #EDF2E4;
   }
@@ -44,8 +44,8 @@
       --bonus: #E0A33C;
       --cal-mwf: #5A7A3E;
       --cal-tt: #4F7A8A;
-      --cal-alt: #6E5A9E;
-      --alt-ink: #B6A6DC;
+      --cal-alt: #C2611F;
+      --alt-ink: #E8A268;
       --border: #3A3631;
       --done-bg: #2A3320;
     }
@@ -364,8 +364,8 @@
         </button>
       </div>
       <div class="toggle">
-        <button data-routine="mwf" class="active"><span class="t-name">Standard</span><span class="t-days">(Mon, Wed, Fri)</span></button>
-        <button data-routine="tt"><span class="t-name">Rest</span><span class="t-days">(Tue, Thu)</span></button>
+        <button data-routine="mwf" class="active"><span class="t-name">Standard</span></button>
+        <button data-routine="tt"><span class="t-name">Rest</span></button>
       </div>
       <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
       <div class="progress-text">
@@ -410,7 +410,7 @@
     <div class="cal-head" id="cal-head"></div>
     <div class="cal-grid" id="cal-grid"></div>
     <div class="cal-legend" id="cal-legend"></div>
-    <p class="cal-hint">Tap any past or current day to set or clear it — cycles Standard → Rest → Other → empty.</p>
+    <p class="cal-hint">Tap any past or current day to set or clear it. Cycles Standard → Rest → Run → empty.</p>
     <div class="prog-section">
       <h2 class="prog-title">Progression log</h2>
       <p class="prog-caption">Every time you change a target, it's recorded here.</p>
@@ -483,28 +483,30 @@
         { name: "Warm-up", time: "~3 min", items: [
           { id: "mwf-w-1", name: "Cat-cow", dose: "8–10 reps", desc: "On all fours, hands under shoulders, knees under hips. Inhale and drop your belly toward the floor, lifting your chest and tailbone (cow). Exhale and round your spine to the ceiling, tucking your chin and tailbone (cat). Move slowly, syncing breath with motion." },
           { id: "mwf-w-2", name: "Hip circles", dose: "10 each way", desc: "Stand with feet shoulder-width apart, hands on hips. Draw a large circle with your hips, keeping your upper body relatively still. Use the full available range of motion in each direction." },
-          { id: "mwf-w-3", name: "Leg swings", dose: "12–15 each", desc: "Stand on one leg, use a wall or chair for balance if needed. Swing the other leg forward and back like a pendulum, keeping it relatively straight. Let momentum do the work — don't force the range." },
+          { id: "mwf-w-3", name: "Leg swings", dose: "12–15 each", desc: "Stand on one leg, use a wall or chair for balance if needed. Swing the other leg forward and back like a pendulum, keeping it relatively straight. Let momentum do the work - don't force the range." },
           { id: "mwf-w-4", name: "Inchworm", dose: "5 reps", desc: "From standing, hinge forward and place hands on the floor (bend knees as much as needed). Walk your hands forward until you're in a plank. Walk hands back to feet and stand up. Move slowly and controlled." }
         ]},
         { name: "Main block", time: "~15 min", items: [
-          { id: "mwf-m-1", name: "Side plank — right", dose: "1 min", time: 60, desc: "Lie on your right side with elbow directly under shoulder, legs stacked. Lift hips so your body forms a straight line from head to heels. Keep core engaged, don't let hips sag. Look straight ahead." },
-          { id: "mwf-m-2", name: "Side plank — left", dose: "1 min", time: 60, desc: "Same as right side, mirrored. Elbow under shoulder, body in a straight line, hips lifted. Don't let the top hip drift backward." },
-          { id: "mwf-m-3", name: "Front plank", dose: "1 min", time: 60, desc: "On your elbows, body in a straight line from head to heels. Engage glutes and core — no hip sag, no piking up. Forearms parallel, eyes looking just past your hands. Breathe steadily." },
+          { id: "mwf-m-1", name: "Side plank - right", dose: "1 min", time: 60, desc: "Lie on your right side with elbow directly under shoulder, legs stacked. Lift hips so your body forms a straight line from head to heels. Keep core engaged, don't let hips sag. Look straight ahead." },
+          { id: "mwf-m-2", name: "Side plank - left", dose: "1 min", time: 60, desc: "Same as right side, mirrored. Elbow under shoulder, body in a straight line, hips lifted. Don't let the top hip drift backward." },
+          { id: "mwf-m-3", name: "Front plank", dose: "1 min", time: 60, desc: "On your elbows, body in a straight line from head to heels. Engage glutes and core - no hip sag, no piking up. Forearms parallel, eyes looking just past your hands. Breathe steadily." },
           { id: "mwf-m-4", name: "Hollow body hold", dose: "30–40 sec", time: 40, desc: "Lie on your back, lower back pressed firmly into the floor. Lift arms overhead and legs to about 6 inches off the ground. You should look like a banana from the side. If your lower back lifts off the floor, raise legs higher to reduce difficulty." },
+          { id: "mwf-m-12", name: "Wall sit", dose: "50 sec", time: 50, desc: "Sit with your back flat against a wall, thighs parallel to the floor, knees stacked over your ankles at 90°. Hold, weight in your heels, lower back pressed to the wall." },
           { id: "mwf-m-5", name: "Regular push-ups", dose: "10–14 reps", desc: "Hands slightly wider than shoulders, fingers spread. Keep elbows tucked at roughly 45° to your body (not flared to 90°). Lower until chest is just above the floor, then push back up. Body stays in one rigid line." },
-          { id: "mwf-m-6", name: "Mountain climbers", dose: "50 reps", desc: "Start in a plank with straight arms. Drive one knee toward your chest, then quickly switch legs. Keep hips low and stable — don't let them bounce up. Quick but controlled, not frantic. Pause and shake out at 25." },
+          { id: "mwf-m-6", name: "Mountain climbers", dose: "50 reps", desc: "Start in a plank with straight arms. Drive one knee toward your chest, then quickly switch legs. Keep hips low and stable - don't let them bounce up. Quick but controlled, not frantic. Pause and shake out at 25." },
           { id: "mwf-m-7", name: "Squats", dose: "25 reps", desc: "Feet shoulder-width apart, toes slightly turned out. Sit back as if into a chair, keeping chest up and weight in your heels. Descend until thighs are roughly parallel to the floor (or as deep as mobility allows). Drive through heels to stand." },
           { id: "mwf-m-8", name: "Glute bridge", dose: "15 reps", desc: "Lie on your back, knees bent, feet flat about hip-width apart, heels close to your glutes. Drive through your heels to lift hips, squeezing glutes hard at the top. Body forms a straight line from knees to shoulders. Pause 2 seconds at the top, then lower with control." },
-          { id: "mwf-m-9", name: "Knee push-ups", dose: "10–15 reps", desc: "Same form as regular push-ups but with knees on the floor. Body still forms a straight line from knees to head — don't pike hips up. Elbows tucked tight to the body." },
-          { id: "mwf-m-10", name: "Superman hold", dose: "5–8 × 5–10s", desc: "Lie face down, arms extended forward, legs straight. Simultaneously lift arms, chest, and legs off the floor, squeezing lower back and glutes. Hold for 5–10 seconds, then lower with control. Look at the floor, not up — keep neck neutral." },
-          { id: "mwf-m-11", name: "Bird dog", dose: "20 (10 each side)", desc: "From all fours, extend opposite arm and leg simultaneously (right arm + left leg, then switch). Hold for 2 seconds. Keep hips square to the floor — don't rotate. Move slowly. 10 each side, 20 total." }
+          { id: "mwf-m-13", name: "Leg lifts", dose: "20 reps", desc: "Lie on your back, legs straight, hands tucked under your lower back or by your sides. Keep your lower back pressed down as you raise both legs toward vertical, then lower them slowly without letting your heels touch the floor. Reduce the range if your back arches." },
+          { id: "mwf-m-9", name: "Knee push-ups", dose: "10–15 reps", desc: "Same form as regular push-ups but with knees on the floor. Body still forms a straight line from knees to head - don't pike hips up. Elbows tucked tight to the body." },
+          { id: "mwf-m-11", name: "Bird dog", dose: "20 (10 each side)", desc: "From all fours, extend opposite arm and leg simultaneously (right arm + left leg, then switch). Hold for 2 seconds. Keep hips square to the floor - don't rotate. Move slowly. 10 each side, 20 total." },
+          { id: "mwf-m-10", name: "Superman hold", dose: "5–8 × 5–10s", desc: "Lie face down, arms extended forward, legs straight. Simultaneously lift arms, chest, and legs off the floor, squeezing lower back and glutes. Hold for 5–10 seconds, then lower with control. Look at the floor, not up - keep neck neutral." }
         ]},
         { name: "Cool-down stretch", time: "~5 min", items: [
-          { id: "mwf-c-1", name: "Standing forward fold", dose: "45s × 2", time: 45, sets: 2, desc: "From standing, hinge at the hips and fold forward, letting upper body hang. Bend knees as much as you need to at first. Over time, work toward straighter legs. Let gravity do the work — don't bounce or force it. Breathe deeply." },
-          { id: "mwf-c-2", name: "Standing hamstring — right", dose: "45 sec", time: 45, desc: "Stand tall. Extend right leg forward, heel on the floor (or on a low step / bench if available), toes pointing up. Keep both legs straight. Hinge forward at the hips, keeping your back flat, until you feel the stretch in the back of the right thigh. Hands rest on the front leg or reach toward the toes." },
-          { id: "mwf-c-3", name: "Standing hamstring — left", dose: "45 sec", time: 45, desc: "Same as right side, mirrored. Left leg forward, heel down, toes up. Hinge from the hips with a flat back, feel the stretch in the back of the left thigh." },
-          { id: "mwf-c-4", name: "Figure-four — right", dose: "45 sec", time: 45, desc: "On your back, knees bent. Cross right ankle over left knee (creating a '4' shape). Reach through and pull both legs toward your chest. Releases right glute and hip rotators." },
-          { id: "mwf-c-5", name: "Figure-four — left", dose: "45 sec", time: 45, desc: "Mirrored. Left ankle over right knee, pull both legs toward chest." },
+          { id: "mwf-c-1", name: "Standing forward fold", dose: "45s × 2", time: 45, sets: 2, desc: "From standing, hinge at the hips and fold forward, letting upper body hang. Bend knees as much as you need to at first. Over time, work toward straighter legs. Let gravity do the work - don't bounce or force it. Breathe deeply." },
+          { id: "mwf-c-2", name: "Standing hamstring - right", dose: "45 sec", time: 45, desc: "Stand tall. Extend right leg forward, heel on the floor (or on a low step / bench if available), toes pointing up. Keep both legs straight. Hinge forward at the hips, keeping your back flat, until you feel the stretch in the back of the right thigh. Hands rest on the front leg or reach toward the toes." },
+          { id: "mwf-c-3", name: "Standing hamstring - left", dose: "45 sec", time: 45, desc: "Same as right side, mirrored. Left leg forward, heel down, toes up. Hinge from the hips with a flat back, feel the stretch in the back of the left thigh." },
+          { id: "mwf-c-4", name: "Figure-four - right", dose: "45 sec", time: 45, desc: "On your back, knees bent. Cross right ankle over left knee (creating a '4' shape). Reach through and pull both legs toward your chest. Releases right glute and hip rotators." },
+          { id: "mwf-c-5", name: "Figure-four - left", dose: "45 sec", time: 45, desc: "Mirrored. Left ankle over right knee, pull both legs toward chest." },
           { id: "mwf-c-6", name: "Child's pose", dose: "45 sec", time: 45, desc: "Kneel with knees apart, big toes touching. Sit hips back toward your heels and fold forward, arms extended or resting by your sides. Forehead rests on the mat. Breathe into your lower back." }
         ]}
       ]
@@ -519,22 +521,24 @@
           { id: "tt-a-4", name: "Inchworm", dose: "5 reps", desc: "Hinge from standing, hands to floor, walk out to plank, walk back, stand. Slow and controlled." }
         ]},
         { name: "Strength + core", time: "~12 min", items: [
+          { id: "tt-s-11", name: "Wall sit", dose: "50 sec", time: 50, desc: "Sit with your back flat against a wall, thighs parallel to the floor, knees stacked over your ankles at 90°. Hold, weight in your heels, lower back pressed to the wall." },
           { id: "tt-s-1", name: "Glute bridge", dose: "15 × 2", desc: "On your back, feet flat, hip-width apart, heels close to glutes. Drive hips up through heels, squeeze glutes at the top. Pause 2 seconds, then lower with control. Two sets of 15." },
-          { id: "tt-s-2", name: "Single-leg deadlift", dose: "8 each × 2", desc: "Stand on one leg with a soft (not locked) knee. Hinge at the hip, sending the other leg straight behind you as your torso tips forward. Keep back flat, reach toward the ground. Return to standing by squeezing glutes. Go slow — balance is part of the work. 8 reps each leg, two sets. This is the one exercise that strengthens the hamstring through its range, complementing the stretching." },
-          { id: "tt-s-8", name: "Push-ups", dose: "10 reps", desc: "Hands slightly wider than shoulders, elbows tucked around 45°. Lower until chest is just above the floor, then push back up, body in one straight line. Keep it controlled — no need to grind, you have frisbee later." },
-          { id: "tt-s-4", name: "Dead bug", dose: "10 each × 2", desc: "On your back, arms extended toward ceiling, knees bent at 90° (shins parallel to floor). Slowly lower opposite arm and leg toward the floor without letting lower back arch off the ground. Return and switch sides. Move slowly. 10 each side, two sets." },
-          { id: "tt-s-5", name: "Plank shoulder taps", dose: "10 each side", desc: "Start in a high plank (straight arms), feet a little wider than shoulder-width for stability. Tap one hand to the opposite shoulder, keeping your hips as still as possible — resist rotating. Alternate sides. Slow and controlled; the stillness is the point." },
+          { id: "tt-s-12", name: "Leg lifts", dose: "20 reps", desc: "Lie on your back, legs straight, hands tucked under your lower back or by your sides. Keep your lower back pressed down as you raise both legs toward vertical, then lower them slowly without letting your heels touch the floor. Reduce the range if your back arches." },
+          { id: "tt-s-2", name: "Single-leg deadlift", dose: "8 each × 2", desc: "Stand on one leg with a soft (not locked) knee. Hinge at the hip, sending the other leg straight behind you as your torso tips forward. Keep back flat, reach toward the ground. Return to standing by squeezing glutes. Go slow - balance is part of the work. 8 reps each leg, two sets. This is the one exercise that strengthens the hamstring through its range, complementing the stretching." },
+          { id: "tt-s-8", name: "Push-ups", dose: "10 reps", desc: "Hands slightly wider than shoulders, elbows tucked around 45°. Lower until chest is just above the floor, then push back up, body in one straight line. Keep it controlled - no need to grind, you have frisbee later." },
+          { id: "tt-s-10", name: "Bilateral dead bug", dose: "25 reps", desc: "On your back, arms reaching to the ceiling, knees bent at 90°. Lower both arms overhead and extend both legs out straight together, keeping your lower back pressed to the floor. Return and repeat. Shorten the range if your back lifts." },
+          { id: "tt-s-5", name: "Plank shoulder taps", dose: "10 each side", desc: "Start in a high plank (straight arms), feet a little wider than shoulder-width for stability. Tap one hand to the opposite shoulder, keeping your hips as still as possible - resist rotating. Alternate sides. Slow and controlled; the stillness is the point." },
           { id: "tt-s-9", name: "Knee push-ups", dose: "10 reps", desc: "Knees on the floor, body straight from knees to head, elbows tucked. A lighter finish to the pressing work after the regular push-ups earlier." },
-          { id: "tt-s-7", name: "Bird dog", dose: "10 each side", desc: "From all fours, extend opposite arm and leg simultaneously (right arm + left leg, then switch). Hold for 2 seconds. Keep hips square to the floor — don't rotate. Move slowly." }
+          { id: "tt-s-7", name: "Bird dog", dose: "10 each side", desc: "From all fours, extend opposite arm and leg simultaneously (right arm + left leg, then switch). Hold for 2 seconds. Keep hips square to the floor - don't rotate. Move slowly." }
         ]},
         { name: "Hamstring + hip mobility", time: "~9 min", items: [
           { id: "tt-m-1", name: "Standing forward fold", dose: "45s × 3", time: 45, sets: 3, desc: "Hinge at the hips, fold forward, let upper body hang. Bend knees as needed at first, work toward straight legs over time. Don't bounce or force. Breathe deeply. Three sets of 45 seconds." },
-          { id: "tt-m-2", name: "Standing hamstring — right", dose: "45 sec", time: 45, desc: "Stand tall. Extend right leg forward, heel on the floor (or on a low step / bench if available), toes pointing up. Keep both legs straight. Hinge forward at the hips, keeping your back flat, until you feel the stretch in the back of the right thigh. Hands rest on the front leg or reach toward the toes." },
-          { id: "tt-m-3", name: "Standing hamstring — left", dose: "45 sec", time: 45, desc: "Same as right side, mirrored. Left leg forward, heel down, toes up. Hinge from the hips with a flat back, feel the stretch in the back of the left thigh." },
-          { id: "tt-m-5", name: "Low lunge — right", dose: "45 sec", time: 45, desc: "Right foot forward, left knee on mat. Front shin vertical. Press hips gently forward, feeling stretch in the front of the left hip. Torso upright." },
-          { id: "tt-m-6", name: "Low lunge — left", dose: "45 sec", time: 45, desc: "Mirrored. Left foot forward, right knee on mat. Hips pressed forward." },
-          { id: "tt-m-7", name: "Figure-four — right", dose: "45 sec", time: 45, desc: "On your back, knees bent. Cross right ankle over left knee (creating a '4' shape). Reach through and pull both legs toward your chest. Releases right glute and hip rotators." },
-          { id: "tt-m-8", name: "Figure-four — left", dose: "45 sec", time: 45, desc: "Mirrored. Left ankle over right knee, pull both legs toward chest." },
+          { id: "tt-m-2", name: "Standing hamstring - right", dose: "45 sec", time: 45, desc: "Stand tall. Extend right leg forward, heel on the floor (or on a low step / bench if available), toes pointing up. Keep both legs straight. Hinge forward at the hips, keeping your back flat, until you feel the stretch in the back of the right thigh. Hands rest on the front leg or reach toward the toes." },
+          { id: "tt-m-3", name: "Standing hamstring - left", dose: "45 sec", time: 45, desc: "Same as right side, mirrored. Left leg forward, heel down, toes up. Hinge from the hips with a flat back, feel the stretch in the back of the left thigh." },
+          { id: "tt-m-5", name: "Low lunge - right", dose: "45 sec", time: 45, desc: "Right foot forward, left knee on mat. Front shin vertical. Press hips gently forward, feeling stretch in the front of the left hip. Torso upright." },
+          { id: "tt-m-6", name: "Low lunge - left", dose: "45 sec", time: 45, desc: "Mirrored. Left foot forward, right knee on mat. Hips pressed forward." },
+          { id: "tt-m-7", name: "Figure-four - right", dose: "45 sec", time: 45, desc: "On your back, knees bent. Cross right ankle over left knee (creating a '4' shape). Reach through and pull both legs toward your chest. Releases right glute and hip rotators." },
+          { id: "tt-m-8", name: "Figure-four - left", dose: "45 sec", time: 45, desc: "Mirrored. Left ankle over right knee, pull both legs toward chest." },
           { id: "tt-m-9", name: "Child's pose", dose: "60 sec", time: 60, desc: "Kneel with knees apart, big toes touching. Sit hips back to heels, fold forward, arms extended or by your sides. Forehead on mat. Breathe into the lower back." }
         ]}
       ]
@@ -659,7 +663,7 @@
     if (altBtn) {
       const on = hasToken(ds, 'alt');
       altBtn.classList.toggle('active', on);
-      altBtn.textContent = on ? '✓ Activity logged' : 'Log other activity';
+      altBtn.textContent = on ? '✓ Run logged' : 'Log run';
     }
   }
 
@@ -814,7 +818,7 @@
     const modal = document.getElementById('timer-modal');
     modal.classList.remove('prep', 'rest');
     if (navigator.vibrate) navigator.vibrate(60);
-    playBeep(880, 0.25, 0.6, 'square');
+    playBeep(880, 0.25, 0.6, 'triangle');
     document.getElementById('timer-set').textContent = timer.sets > 1 ? ('Set ' + setNumber + ' of ' + timer.sets) : 'Hold steady';
     document.getElementById('timer-action').textContent = 'Pause';
     document.getElementById('ring-fg').style.strokeDashoffset = 0;
@@ -827,7 +831,7 @@
       timer.remaining--; updateTimerDisplay();
       if (timer.remaining <= 0) {
         clearInterval(timer.interval);
-        playBeep(880, 0.3, 0.6, 'square');
+        playBeep(760, 0.4, 0.6, 'sine');
         if (timer.currentSet < timer.sets) {
           if (navigator.vibrate) navigator.vibrate([100, 60, 100]);
           startRest();
@@ -946,7 +950,7 @@
     const items = [
       { type: 'dot', color: 'var(--cal-mwf)', label: 'Standard' },
       { type: 'dot', color: 'var(--cal-tt)', label: 'Rest' },
-      { type: 'dot', color: 'var(--cal-alt)', label: 'Other activity' },
+      { type: 'dot', color: 'var(--cal-alt)', label: 'Run' },
       { type: 'ring', border: '1.5px dashed var(--text-faint)', label: 'Missed' },
       { type: 'ring', border: '2px solid var(--text)', label: 'Today' }
     ];
