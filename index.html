@@ -25,6 +25,7 @@
     --cal-mwf: #5A7A3E;
     --cal-tt: #4F7A8A;
     --cal-alt: #C2611F;
+    --cal-other: #6E5A9E;
     --alt-ink: #8F4A17;
     --border: #E8E2D3;
     --done-bg: #EDF2E4;
@@ -45,6 +46,7 @@
       --cal-mwf: #5A7A3E;
       --cal-tt: #4F7A8A;
       --cal-alt: #C2611F;
+      --cal-other: #6E5A9E;
       --alt-ink: #E8A268;
       --border: #3A3631;
       --done-bg: #2A3320;
@@ -384,7 +386,6 @@
     <div class="footer">
       <div class="action-row">
         <button class="action-btn done-btn" id="mark-done-btn">Mark today done</button>
-        <button class="action-btn alt-btn" id="mark-alt-btn">Log other activity</button>
       </div>
       <div class="footer-center">
         <button class="reset-btn" id="reset-btn">Reset session</button>
@@ -410,7 +411,7 @@
     <div class="cal-head" id="cal-head"></div>
     <div class="cal-grid" id="cal-grid"></div>
     <div class="cal-legend" id="cal-legend"></div>
-    <p class="cal-hint">Tap any past or current day to set or clear it. Cycles Standard → Rest → Run → empty.</p>
+    <p class="cal-hint">Tap any past or current day to set or clear it. Cycles Standard → Rest → Run → Other → empty.</p>
     <div class="prog-section">
       <h2 class="prog-title">Progression log</h2>
       <p class="prog-caption">Every time you change a target, it's recorded here.</p>
@@ -654,16 +655,10 @@
   function updateActionButtons() {
     const ds = todayStr();
     const doneBtn = document.getElementById('mark-done-btn');
-    const altBtn = document.getElementById('mark-alt-btn');
     if (doneBtn) {
       const on = hasToken(ds, currentRoutine);
       doneBtn.classList.toggle('active', on);
       doneBtn.textContent = on ? '✓ Done today' : 'Mark today done';
-    }
-    if (altBtn) {
-      const on = hasToken(ds, 'alt');
-      altBtn.classList.toggle('active', on);
-      altBtn.textContent = on ? '✓ Run logged' : 'Log run';
     }
   }
 
@@ -919,17 +914,18 @@
       const isPast = ds < tStr;
       const arr = history[ds] || [];
       const workoutType = arr.indexOf('mwf') !== -1 ? 'mwf' : (arr.indexOf('tt') !== -1 ? 'tt' : null);
-      const hasAlt = arr.indexOf('alt') !== -1;
+      const colourOf = { mwf: 'var(--cal-mwf)', tt: 'var(--cal-tt)', alt: 'var(--cal-alt)', other: 'var(--cal-other)' };
+      const tokens = [];
+      if (workoutType) tokens.push(workoutType);
+      if (arr.indexOf('alt') !== -1) tokens.push('alt');
+      if (arr.indexOf('other') !== -1) tokens.push('other');
 
       const cell = document.createElement('div'); cell.className = 'cal-cell';
       const day = document.createElement('div'); day.className = 'cal-day'; day.textContent = d;
 
-      if (workoutType) {
-        day.style.background = (workoutType === 'mwf') ? 'var(--cal-mwf)' : 'var(--cal-tt)'; day.style.color = '#fff'; day.style.fontWeight = '500';
-        if (hasAlt) { const dot = document.createElement('span'); dot.className = 'cal-dot'; day.appendChild(dot); }
-        if (isToday) { day.style.outline = '2px solid var(--text)'; day.style.outlineOffset = '2px'; }
-      } else if (hasAlt) {
-        day.style.background = 'var(--cal-alt)'; day.style.color = '#fff'; day.style.fontWeight = '500';
+      if (tokens.length) {
+        day.style.background = colourOf[tokens[0]]; day.style.color = '#fff'; day.style.fontWeight = '500';
+        if (tokens.length > 1) { const dot = document.createElement('span'); dot.className = 'cal-dot'; dot.style.background = colourOf[tokens[1]]; day.appendChild(dot); }
         if (isToday) { day.style.outline = '2px solid var(--text)'; day.style.outlineOffset = '2px'; }
       } else if (isToday) {
         day.style.border = '2px solid var(--text)'; day.style.color = 'var(--text)'; day.style.fontWeight = '500';
@@ -951,6 +947,7 @@
       { type: 'dot', color: 'var(--cal-mwf)', label: 'Standard' },
       { type: 'dot', color: 'var(--cal-tt)', label: 'Rest' },
       { type: 'dot', color: 'var(--cal-alt)', label: 'Run' },
+      { type: 'dot', color: 'var(--cal-other)', label: 'Other activity' },
       { type: 'ring', border: '1.5px dashed var(--text-faint)', label: 'Missed' },
       { type: 'ring', border: '2px solid var(--text)', label: 'Today' }
     ];
@@ -1071,8 +1068,8 @@
 
   function cycleDay(ds) {
     const arr = history[ds] || [];
-    const state = arr.indexOf('mwf') !== -1 ? 'mwf' : (arr.indexOf('tt') !== -1 ? 'tt' : (arr.indexOf('alt') !== -1 ? 'alt' : 'none'));
-    const next = { none: 'mwf', mwf: 'tt', tt: 'alt', alt: 'none' }[state];
+    const state = arr.indexOf('mwf') !== -1 ? 'mwf' : (arr.indexOf('tt') !== -1 ? 'tt' : (arr.indexOf('alt') !== -1 ? 'alt' : (arr.indexOf('other') !== -1 ? 'other' : 'none')));
+    const next = { none: 'mwf', mwf: 'tt', tt: 'alt', alt: 'other', other: 'none' }[state];
     if (next === 'none') delete history[ds]; else history[ds] = [next];
     saveHistory();
     renderCalendar();
@@ -1118,11 +1115,6 @@
   document.getElementById('mark-done-btn').addEventListener('click', () => {
     const ds = todayStr();
     if (hasToken(ds, currentRoutine)) removeToken(ds, currentRoutine); else addToken(ds, currentRoutine);
-    updateActionButtons();
-  });
-  document.getElementById('mark-alt-btn').addEventListener('click', () => {
-    const ds = todayStr();
-    if (hasToken(ds, 'alt')) removeToken(ds, 'alt'); else addToken(ds, 'alt');
     updateActionButtons();
   });
 
