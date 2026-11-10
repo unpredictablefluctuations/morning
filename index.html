@@ -826,7 +826,7 @@
       timer.remaining--; updateTimerDisplay();
       if (timer.remaining <= 0) {
         clearInterval(timer.interval);
-        playBeep(760, 0.4, 0.6, 'sine');
+        playBeep(880, 0.25, 0.6, 'triangle');
         if (timer.currentSet < timer.sets) {
           if (navigator.vibrate) navigator.vibrate([100, 60, 100]);
           startRest();
